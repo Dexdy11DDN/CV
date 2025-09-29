@@ -482,6 +482,69 @@
         margin: 0 5px;
         min-width: 100px;
       }
+
+      /* AI Poker Styles */
+      .ai-player {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+      }
+      
+      .ai-cards {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .card-back {
+        width: 40px;
+        height: 60px;
+        background: linear-gradient(45deg, #1a1a2e, #16213e);
+        border: 2px solid var(--pixel-accent);
+        border-radius: 6px;
+        margin: 0 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--pixel-accent);
+        font-size: 20px;
+      }
+      
+      .card-back::before {
+        content: "🂠";
+      }
+      
+      .community-cards {
+        background: rgba(0,255,0,0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .game-info {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      
+      .betting-controls {
+        background: rgba(255,215,0,0.1);
+        border-radius: 10px;
+        padding: 20px;
+        border: 2px solid rgba(255,215,0,0.3);
+      }
+      
+      .ai-players .row > div {
+        padding: 5px;
+      }
+      
+      #raiseAmount {
+        width: 100%;
+        margin: 10px 0;
+      }
     </style>
   </head>
   <body>
@@ -1113,7 +1176,7 @@
         });
         
         document.getElementById('luck-egg').addEventListener('click', (e) => {
-          console.log('Luck egg clicked - opening Poker');
+          console.log('Luck egg clicked - opening Texas Hold\'em Poker');
           e.preventDefault();
           openGame('pokerModal');
         });
