@@ -224,12 +224,15 @@
       /* Easter Egg Styles */
       .easter-egg {
         cursor: pointer;
-        transition: transform 0.2s, color 0.2s;
+        transition: transform 0.2s, color 0.2s, text-decoration 0.2s;
         display: inline-block;
+        color: inherit !important;
+        text-decoration: none !important;
       }
       .easter-egg:hover {
-        transform: scale(1.1);
+        transform: scale(1.05);
         color: var(--pixel-accent) !important;
+        text-decoration: underline !important;
       }
       
       /* Easter egg highlighting */
@@ -241,6 +244,8 @@
         margin: 0 2px !important;
         box-shadow: 0 0 10px rgba(0, 255, 247, 0.6) !important;
         animation: easterEggPulse 2s infinite !important;
+        color: var(--pixel-accent) !important;
+        text-decoration: underline !important;
       }
       
       @keyframes easterEggPulse {
@@ -499,19 +504,6 @@
       .rhythm-key.pressed {
         background: var(--pixel-accent);
         color: var(--pixel-accent2);
-      }
-      
-      /* Doom Game Styles */
-      .doom-game {
-        border: 2px solid var(--pixel-accent);
-        margin: 20px auto;
-        background: #000;
-        cursor: crosshair;
-      }
-      .doom-controls {
-        text-align: center;
-        color: var(--text-color);
-        font-family: 'Share Tech Mono', monospace;
       }
       
       /* Loading animation */
@@ -1248,18 +1240,6 @@
 
 
 
-        <h2>� Classic DOOM (1993)</h2>
-        <p>The legendary first-person shooter! Local DOOM files detected for instant loading!</p>
-        
-        <!-- Local File Status -->
-        <div class="mb-3" style="background: rgba(0,255,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid #28a745;">
-          <h6 style="color: #28a745; margin-bottom: 10px;">✅ Local DOOM Ready!</h6>
-          <div style="color: #888; font-size: 14px;">
-            <strong>GAME/</strong> folder with <strong>AUTOEXEC.BAT</strong> detected - ultra-fast loading!<br>
-            <small>FreeDOOM • Pre-extracted files • Zero processing time • Instant startup</small>
-          </div>
-        </div>
-        
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="assets/js/script.js"></script>
@@ -1298,15 +1278,13 @@
 
       // Easter Egg Game Functions
       document.addEventListener('DOMContentLoaded', function() {
-        // Add visual feedback for easter eggs
+        // Add subtle visual feedback for easter eggs (just cursor)
         const easterEggs = document.querySelectorAll('.easter-egg');
         easterEggs.forEach(egg => {
           egg.style.cursor = 'pointer';
-          egg.style.textDecoration = 'underline';
-          egg.style.color = '#00fff7';
         });
         
-        // Easter egg click handlers with debugging
+        // Easter egg click handlers
         document.getElementById('hobby-egg').addEventListener('click', (e) => {
           console.log('Hobby egg clicked - opening Tic Tac Toe');
           e.preventDefault();
