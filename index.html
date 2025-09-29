@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beautiful CV Template</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(270deg, #232526, #232526, #232526, #232526, #232526);
+        --card-bg: rgba(20,22,28,0.97);
+        --card-shadow: 0 4px 24px 0 rgba(0,0,0,0.35);
+        --text-color: #e0eafc;
+        --navbar-bg: #181c24;
+        --pixel-accent: #00fff7;
+        --pixel-accent2: #3a3a3a;
+        --pixel-accent3: #00fff7;
+      }
+      body {
+        background: var(--bg-gradient);
+        font-family: 'Share Tech Mono', 'Consolas', 'monospace', Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+        overflow-x: hidden;
+      }
+      /* Pixel art background overlay */
+      .pixel-bg {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.08;
+        background: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="40" height="40" fill="%2300bcd4" fill-opacity="0.08"/><rect x="20" y="20" width="20" height="20" fill="%23bdbdbd" fill-opacity="0.08"/><rect x="10" y="10" width="10" height="10" fill="%2300bcd4" fill-opacity="0.08"/></svg>');
+        background-size: 40px 40px;
+        mix-blend-mode: lighten;
+      }
+      .animated-bg {
+        z-index: 0;
+      }
+      .cv-foreground {
+        position: relative;
+        z-index: 10;
+        max-width: 900px;
+        margin: 60px auto 40px auto;
+        background: var(--card-bg);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        border-radius: 24px;
+        padding: 100px 30px 30px 30px; /* Increased top padding for navbar */
+        border: 2.5px solid var(--pixel-accent2);
+        box-shadow: 0 0 0 2.5px var(--pixel-accent), 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        overflow: visible; /* Allow scaling sections to overflow */
+      }
+      /* Intuitive template formatting */
+      .cv-section {
+        background: var(--card-bg);
+        box-shadow: var(--card-shadow);
+        color: var(--text-color);
+        transition: background 0.7s, color 0.7s, box-shadow 0.7s, transform 0.3s cubic-bezier(.4,2,.6,1);
+        border-radius: 32px;
+        border: 1.5px solid var(--pixel-accent2);
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+        margin-bottom: 2.5rem;
+        display: block;
+        flex-direction: unset;
+        gap: unset;
+        transform-origin: center top;
+        overflow: visible;
+        text-align: left;
+      }
+      .cv-section > .container, .cv-section .group {
+        padding: 0;
+        display: block;
+      }
+      .cv-section h2, .cv-section h3, .cv-section h4 {
+        text-align: left;
+      }
+      .cv-section .row, .cv-section .item {
+        display: block;
+        margin: 0 0 1.2em 0;
+        padding: 0;
+      }
+      .cv-section .item > * {
+        margin-bottom: 0.5em;
+      }
+      .cv-section .text-muted {
+        color: #b0b8c1 !important;
+      }
+      .cv-section .progress {
+        margin-bottom: 1em;
+        height: 20px;
+      }
+      .progress-bar {
+        font-family: 'Share Tech Mono', 'Consolas', 'monospace', Arial, sans-serif;
+        font-size: 0.95em;
+        letter-spacing: 1px;
+        text-shadow: 0 1px 2px #000a;
+        line-height: 20px;
+      }
+      /* Skill item styling */
+      .skill-item {
+        margin-bottom: 1.2em;
+      }
+      .skill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5em;
+      }
+      .skill-header h3 {
+        margin: 0;
+        font-size: 1.1em;
+      }
+      .skill-level {
+        font-size: 0.9em;
+        color: var(--pixel-accent);
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+      /* Remove column width override for uniform layout */
+      #skills-contact-section .col-md-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+      }
+      .navbar {
+        background: var(--navbar-bg) !important;
+        border-radius: 18px;
+        margin-top: 20px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
+        border: 1.5px solid var(--pixel-accent2);
+        font-family: 'Share Tech Mono', 'Consolas', 'monospace', Arial, sans-serif;
+      }
+      .navbar-brand {
+        color: var(--pixel-accent) !important;
+        text-shadow: none;
+        font-size: 1.5em;
+        letter-spacing: 2px;
+      }
+      .nav-link {
+        color: var(--text-color) !important;
+        border-bottom: 1.5px solid transparent;
+      }
+      .nav-link:hover, .nav-link:focus {
+        color: var(--pixel-accent) !important;
+        border-bottom: 1.5px solid var(--pixel-accent);
+      }
+      .dark-toggle-btn {
+        position: static;
+        margin: 0;
+        border: 1.5px solid var(--pixel-accent2);
+        color: var(--pixel-accent);
+        background: var(--card-bg);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        cursor: pointer;
+        font-size: 1.3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.7s, color 0.7s, border 0.7s;
+      }
+      .dark-toggle-btn:focus { outline: 2px solid var(--pixel-accent) !important; }
+      .social-icons a {
+        color: var(--pixel-accent2);
+      }
+      .social-icons a i {
+        color: var(--pixel-accent2) !important;
+      }
+      .social-icons a:hover {
+        color: var(--pixel-accent);
+      }
+      .social-icons a:hover i {
+        color: var(--pixel-accent) !important;
+      }
+      body.dark-mode .social-icons a:hover {
+        color: var(--pixel-accent);
+      }
+      body.dark-mode .social-icons a:hover i {
+        color: var(--pixel-accent) !important;
+      }
+      /* Colorblind-friendly patterns for progress bars */
+      .colorblind-spanish {
+        background-image: repeating-linear-gradient(135deg, #28a745, #28a745 8px, #fff 8px, #fff 12px);
+        background-size: 20px 20px;
+      }
+      .colorblind-french {
+        background-image: repeating-linear-gradient(135deg, #ffc107, #ffc107 8px, #fff 8px, #fff 12px);
+        background-size: 20px 20px;
+      }
+      /* Add focus outlines for accessibility */
+      a:focus, button:focus, .btn:focus {
+        outline: 2px solid #007acc !important;
+        outline-offset: 2px;
+      }
+      .lang-spanish.colorblind {
+        background-image: repeating-linear-gradient(135deg, #28a745, #28a745 8px, #fff 8px, #fff 12px);
+        background-size: 20px 20px;
+      }
+      .lang-french.colorblind {
+        background-image: repeating-linear-gradient(135deg, #ffc107, #ffc107 8px, #fff 8px, #fff 12px);
+        background-size: 20px 20px;
+      }
+      #toggle-colorblind {
+        left: auto;
+        right: auto;
+        position: static;
+      }
+      .lang-spanish.colorblind,
+      .lang-french.colorblind {
+        border-radius: 999px !important;
+        background-clip: padding-box;
+      }
+      
+      /* Easter Egg Styles */
+      .easter-egg {
+        cursor: pointer;
+        transition: transform 0.2s, color 0.2s;
+        display: inline-block;
+      }
+      .easter-egg:hover {
+        transform: scale(1.1);
+        color: var(--pixel-accent) !important;
+      }
+      
+      /* Mini-game Modal Styles */
+      .game-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+      }
+      .game-content {
+        background: var(--card-bg);
+        margin: 5% auto;
+        padding: 30px;
+        border: 2px solid var(--pixel-accent);
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        color: var(--text-color);
+        text-align: center;
+        box-shadow: 0 0 30px rgba(0, 255, 247, 0.3);
+      }
+      .close-game {
+        color: var(--pixel-accent);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .close-game:hover {
+        color: #fff;
+      }
+      
+      /* Tic Tac Toe Styles */
+      .tic-tac-toe {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 5px;
+        margin: 20px auto;
+        justify-content: center;
+      }
+      .tic-cell {
+        width: 80px;
+        height: 80px;
+        background: var(--pixel-accent2);
+        border: 2px solid var(--pixel-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .tic-cell:hover {
+        background: rgba(0, 255, 247, 0.2);
+      }
+      
+      /* Snake Game Styles */
+      .snake-game {
+        border: 2px solid var(--pixel-accent);
+        margin: 20px auto;
+        background: var(--pixel-accent2);
+      }
+      
+      /* Memory Game Styles */
+      .memory-game {
+        display: grid;
+        grid-template-columns: repeat(4, 60px);
+        grid-gap: 10px;
+        margin: 20px auto;
+        justify-content: center;
+      }
+      .memory-card {
+        width: 60px;
+        height: 60px;
+        background: var(--pixel-accent2);
+        border: 2px solid var(--pixel-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        transition: transform 0.3s;
+        border-radius: 8px;
+      }
+      .memory-card.flipped {
+        background: rgba(0, 255, 247, 0.3);
+        transform: rotateY(180deg);
+      }
+      .memory-card.matched {
+        background: rgba(0, 255, 0, 0.3);
+        pointer-events: none;
+      }
+      
+      /* Rhythm Game Styles */
+      .rhythm-game {
+        position: relative;
+        width: 400px;
+        height: 300px;
+        margin: 20px auto;
+        background: var(--pixel-accent2);
+        border: 2px solid var(--pixel-accent);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .rhythm-track {
+        position: absolute;
+        top: 0;
+        width: 80px;
+        height: 100%;
+        border-right: 2px solid var(--pixel-accent);
+      }
+      .rhythm-track:last-child {
+        border-right: none;
+      }
+      .rhythm-note {
+        position: absolute;
+        width: 70px;
+        height: 20px;
+        background: var(--pixel-accent);
+        border-radius: 10px;
+        margin: 5px;
+        transition: top 0.1s linear;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--pixel-accent2);
+      }
+      .rhythm-hit-zone {
+        position: absolute;
+        bottom: 10px;
+        width: 70px;
+        height: 30px;
+        background: rgba(0, 255, 247, 0.3);
+        border: 2px solid var(--pixel-accent);
+        margin: 5px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      .rhythm-controls {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .rhythm-key {
+        width: 60px;
+        height: 40px;
+        background: var(--pixel-accent2);
+        border: 2px solid var(--pixel-accent);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--text-color);
+        user-select: none;
+        transition: background 0.1s;
+      }
+      .rhythm-key.pressed {
+        background: var(--pixel-accent);
+        color: var(--pixel-accent2);
+      }
+      
+      /* Doom Game Styles */
+      .doom-game {
+        border: 2px solid var(--pixel-accent);
+        margin: 20px auto;
+        background: #000;
+        cursor: crosshair;
+      }
+      .doom-controls {
+        text-align: center;
+        color: var(--text-color);
+        font-family: 'Share Tech Mono', monospace;
+      }
+      
+      /* Loading animation */
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+      
+      /* Card Game Styles */
+      .card-area {
+        min-height: 120px;
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      .playing-card {
+        display: inline-block;
+        background: white;
+        border: 2px solid #333;
+        border-radius: 10px;
+        width: 70px;
+        height: 100px;
+        margin: 5px;
+        text-align: center;
+        font-size: 14px;
+        padding: 8px 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        position: relative;
+        font-family: 'Arial', sans-serif;
+      }
+      
+      .poker-card-container {
+        display: inline-block;
+        margin: 5px;
+        border-radius: 12px;
+        padding: 5px;
+        transition: all 0.3s ease;
+      }
+      
+      .poker-card-container:hover {
+        background: rgba(255,255,255,0.1);
+      }
+      
+      .blackjack-game, .poker-game {
+        text-align: center;
+        color: var(--text-color);
+      }
+      
+      .dealer-section, .player-section {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.05);
+      }
+      
+      .game-controls {
+        margin: 20px 0;
+      }
+      
+      .game-controls .btn {
+        margin: 0 5px;
+        min-width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pixel-bg"></div>
+    <div class="animated-bg"></div>
+    <div class="cv-foreground">
+    <!-- Navbar Section -->
+    <section id="navbar-section">
+      <nav class="navbar fixed-top navbar-expand-lg navbar-dark page-navbar gradient" aria-label="Main Navigation">
+        <div class="container">
+          <a class="navbar-brand logo" href="#" aria-label="Homepage">Dexter Dy B. Nievares</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav mx-auto">
+                <li class="nav-item item">
+                  <a class="nav-link" href="#work-experience" aria-label="Experience section">Experience</a>
+                </li>
+                <li class="nav-item item">
+                  <a class="nav-link" href="#education" aria-label="Education section">Education</a>
+                </li>
+                <li class="nav-item item">
+                  <a class="nav-link" href="#skills" aria-label="Skills section">Skills</a>
+                </li>
+                <li class="nav-item item">
+                  <a class="nav-link" href="#languages" aria-label="Languages section">Languages</a>
+                </li>
+                <li class="nav-item item">
+                  <a class="nav-link" href="#hobbies" aria-label="Hobbies section">Hobbies</a>
+                </li>
+              </ul>
+            </div>
+        </div>
+      </nav>
+    </section>
+    <!-- End Navbar Section -->
+
+    <!-- Easter Egg Hint Button -->
+    <div id="easterEggHint" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000;">
+      <button onclick="showEasterEggHelp()" class="btn btn-outline-warning" style="border-radius: 50%; width: 60px; height: 60px; font-size: 24px;" title="Need help finding Easter eggs?">
+        🥚
+      </button>
+    </div>
+
+    <main class="page cv-page">
+      <!-- Intro Section -->
+      <section class="cv-block block-intro border-bottom cv-section" id="intro-section" aria-labelledby="intro-heading">
+        <div class="container">
+          <div class="avatar">
+            <img class="img-fluid rounded-circle" src="Nievares_2022-1455.jpg" alt="Profile photo of Dexter Dy B. Nievares">
+          </div>
+          <p>Hello! I am <strong>Dexter Dy B. Nievares</strong>, a Computer Science student at Mindanao State University who loves learning about programming and technology. I'm currently exploring web development and getting into game creation as a <span class="easter-egg" id="hobby-egg" title="Click me for a surprise!">hobby</span>. I'm always curious about how things work and enjoy discovering new ways to build things with <span class="easter-egg" id="code-egg" title="Click me for a challenge!">code</span>. In my free time, I also enjoy playing classic <span class="easter-egg" id="music-egg" title="� Click for a retro FPS game!">games</span> and exploring different genres.</p>
+          <a href="#" class="btn btn-outline-primary" aria-label="Contact Dexter Dy B. Nievares">Let's Connect</a>
+        </div>
+      </section>
+      <!-- End Intro Section -->
+
+      <!-- Work Experience Section -->
+      <section class="cv-block info cv-section" id="work-experience-section">
+        <div class="container">
+          <div class="work-experience group" id="work-experience">
+            <h2 class="text-center">Academic Projects</h2>
+            <div class="item">
+              <div class="row">
+                <div class="col-md-6">
+                  <h3>Web Development Project</h3>
+                  <h4 class="organization">College Subject - Web Programming</h4>
+                </div>
+                <div class="col-md-6">
+                  <time class="period">2023 - 2024</time>
+                </div>
+              </div>
+              <p class="text-muted">Created a responsive website using HTML, CSS, and JavaScript as part of web programming coursework. Learned about user interface design and basic web development principles.</p>
+            </div>
+            <div class="item">
+              <div class="row">
+                <div class="col-md-6">
+                  <h3>Database Management System</h3>
+                  <h4 class="organization">College Subject - Database Systems</h4>
+                </div>
+                <div class="col-md-6">
+                  <time class="period">2024</time>
+                </div>
+              </div>
+              <p class="text-muted">Designed and implemented a database system using PHP and MySQL for a college project. Gained experience in data modeling and basic CRUD operations.</p>
+            </div>
+            <div class="item">
+              <div class="row">
+                <div class="col-md-6">
+                  <h3>Programming Exercises</h3>
+                  <h4 class="organization">College Subject - Programming Fundamentals</h4>
+                </div>
+                <div class="col-md-6">
+                  <time class="period">2023 - Present</time>
+                </div>
+              </div>
+              <p class="text-muted">Completed various programming assignments using Python and other languages. Working on algorithm implementation and problem-solving through coding exercises.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Work Experience Section -->
+
+      <!-- Education Section -->
+      <section class="cv-block info cv-section" id="education-section">
+        <div class="container">
+          <div class="education group" id="education">
+            <h2 class="text-center">Education</h2>
+            <div class="item">
+              <h3>Elementary</h3>
+              <h4 class="organization">Polomolok Central Elementary School</h4>
+              <p class="text-muted">Completed elementary education with focus on fundamental academic skills and foundational learning.</p>
+            </div>
+            <div class="item">
+              <h3>High School</h3>
+              <h4 class="organization">Philippine Science High School - SOCCSKSARGEN Campus</h4>
+              <p class="text-muted">Specialized in science and mathematics education with advanced curriculum in STEM fields.</p>
+            </div>
+            <div class="item">
+              <h3>College</h3>
+              <h4 class="organization">Mindanao State University - General Santos City Campus</h4>
+              <p class="text-muted">Currently pursuing Bachelor of Science in Information Technology with focus on software development, web technologies, and computer programming. Gaining hands-on experience in various programming languages and modern development frameworks.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Education Section -->
+
+      <!-- Skills & Contact Section -->
+      <section class="cv-block info cv-section" id="skills-contact-section">
+        <div class="container">
+          <div class="group" id="skills">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="skills info-card">
+                  <h2>Web Development</h2>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>HTML</h3>
+                      <span class="skill-level">Intermediate</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="70"
+                      aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>JavaScript</h3>
+                      <span class="skill-level">Intermediate</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="70"
+                      aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>PHP</h3>
+                      <span class="skill-level">Intermediate</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="70"
+                      aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="programming-skills info-card">
+                  <h2>Programming Languages</h2>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Python</h3>
+                      <span class="skill-level">Intermediate</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="70"
+                      aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Scratch 2</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="game-dev-skills info-card">
+                  <h2>Game Development</h2>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Godot</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Unity</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Renpy</h3>
+                      <span class="skill-level">Basic</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-secondary" role="progressbar" aria-valuenow="40"
+                      aria-valuemin="0" aria-valuemax="100" style="width:40%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>RPGMaker</h3>
+                      <span class="skill-level">Basic</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-secondary" role="progressbar" aria-valuenow="40"
+                      aria-valuemin="0" aria-valuemax="100" style="width:40%">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="design-skills info-card">
+                  <h2>Design & Content Creation</h2>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Blender</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Drawing</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-header">
+                      <h3>Writing</h3>
+                      <span class="skill-level">Learning</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+                      aria-valuemin="0" aria-valuemax="100" style="width:30%">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Skills & Contact Section -->
+
+      <!-- Languages Section -->
+      <section class="cv-block info cv-section" id="languages-section" aria-labelledby="languages-heading">
+        <div class="container">
+          <div class="languages group" id="languages">
+            <h2 class="text-center" id="languages-heading">Languages</h2>
+            <div class="row justify-content-center">
+              <div class="col-md-4 col-6 text-center">
+                <h4>Filipino</h4>
+                <div class="progress mb-2" aria-label="Filipino proficiency">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small>Fluent</small>
+              </div>
+              <div class="col-md-4 col-6 text-center">
+                <h4>English</h4>
+                <div class="progress mb-2" aria-label="English proficiency">
+                  <div class="progress-bar bg-info" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small>Intermediate</small>
+              </div>
+              <div class="col-md-4 col-6 text-center">
+                <h4>German</h4>
+                <div class="progress mb-2" aria-label="German proficiency">
+                  <div class="progress-bar bg-warning lang-german" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small>Basic</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Languages Section -->
+
+      <!-- Hobbies Section -->
+      <section class="cv-block info cv-section" id="hobbies-section">
+        <div class="container">
+          <div class="hobbies group" id="hobbies">
+            <h2 class="text-center">Hobbies</h2>
+            <p class="text-center text-muted">I love writing stories and bringing characters to life through digital art. Creative storytelling has always been a passion of mine, whether it's crafting narratives or experimenting with digital illustration techniques. When I'm not coding or drawing, you'll find me enjoying tabletop games with friends or diving into <span class="easter-egg" id="luck-egg" title="🎰 Try your luck!">card games</span> that challenge strategic <span class="easter-egg" id="thinking-egg" title="Test your memory!">thinking</span>. As a gaming enthusiast, I appreciate both the technical craftsmanship and creative design that goes into modern games, which often inspires my own programming and game development projects.</p>
+            
+            <!-- Debug buttons for testing easter eggs -->
+            <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(0,255,247,0.1); border-radius: 10px;">
+              <h6 style="color: #00fff7; margin-bottom: 10px;">🐛 Easter Egg Tests</h6>
+
+              <button onclick="openGame('ticTacToeModal')" class="btn btn-outline-primary btn-sm mr-2">⭕ Test Tic Tac Toe</button>
+              <button onclick="openGame('snakeModal')" class="btn btn-outline-primary btn-sm mr-2">🐍 Test Snake</button>
+              <button onclick="openGame('memoryModal')" class="btn btn-outline-primary btn-sm">🧠 Test Memory</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Hobbies Section -->
+
+      <!-- Footer Section -->
+      <section class="cv-section" id="footer-section">
+        <footer class="page-footer">
+          <div class="container">
+            <div class="contact-info info-card text-center mb-4">
+              <h2>Contact Info</h2>
+              <div class="row justify-content-center">
+                <div class="col-auto">
+                  <i class="ion-ios-telephone icon"></i>
+                  <span>09692010577</span>
+                </div>
+                <div class="col-auto">
+                  <i class="ion-at icon"></i>
+                  <span>dexterdy.nievares@msugensan.edu.ph</span>
+                </div>
+              </div>
+            </div>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/dexterdyBesvail.nievares" target="_blank"><i class="ion-social-facebook" title="Facebook"></i></a>
+              <a href="https://github.com/Dexdy11DDN" target="_blank"><i class="ion-social-github" title="GitHub"></i></a>
+              <a href="https://www.linkedin.com/in/dexter-dy-nievares-4a2765387" target="_blank"><i class="ion-social-linkedin" title="LinkedIn"></i></a>
+            </div>
+          </div>
+        </footer>
+      </section>
+      <!-- End Footer Section -->
+    </main>
+    </div>
+    
+    <!-- Game Modals -->
+    <!-- Tic Tac Toe Game Modal -->
+    <div id="ticTacToeModal" class="game-modal">
+      <div class="game-content">
+        <span class="close-game" onclick="closeGame('ticTacToeModal')">&times;</span>
+        <h2>🎮 Tic Tac Toe</h2>
+        <p>You are X, I am O. Good luck!</p>
+        <div class="tic-tac-toe" id="ticTacToeBoard"></div>
+        <button onclick="resetTicTacToe()" class="btn btn-outline-primary mt-3">Reset Game</button>
+        <div id="ticTacToeResult" class="mt-3"></div>
+      </div>
+    </div>
+
+    <!-- Snake Game Modal -->
+    <div id="snakeModal" class="game-modal">
+      <div class="game-content">
+        <span class="close-game" onclick="closeGame('snakeModal')">&times;</span>
+        <h2>🐍 Snake Game</h2>
+        <p>Use WASD or Arrow Keys to move. Eat the red squares!</p>
+        <canvas id="snakeCanvas" class="snake-game" width="320" height="320"></canvas>
+        <div class="mt-3">
+          <button onclick="startSnake()" class="btn btn-outline-primary">Start Game</button>
+          <div id="snakeScore" class="mt-2">Score: 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Game Modal -->
+    <div id="memoryModal" class="game-modal">
+      <div class="game-content">
+        <span class="close-game" onclick="closeGame('memoryModal')">&times;</span>
+        <h2>🧠 Memory Match</h2>
+        <p>Find all the matching pairs!</p>
+        <div class="memory-game" id="memoryBoard"></div>
+        <button onclick="resetMemory()" class="btn btn-outline-primary mt-3">New Game</button>
+      </div>
+    </div>
+
+    <!-- Blackjack Game Modal -->
+    <div id="blackjackModal" class="game-modal">
+      <div class="game-content" style="max-width: 600px;">
+        <span class="close-game" onclick="closeGame('blackjackModal')">&times;</span>
+        <h2>🃏 Blackjack</h2>
+        <p>Get as close to 21 as possible without going over!</p>
+        
+        <div class="blackjack-game">
+          <div class="dealer-section mb-4">
+            <h4>Dealer</h4>
+            <div id="dealerCards" class="card-area"></div>
+            <div id="dealerScore">Score: ?</div>
+          </div>
+          
+          <div class="player-section">
+            <h4>You</h4>
+            <div id="playerCards" class="card-area"></div>
+            <div id="playerScore">Score: 0</div>
+          </div>
+          
+          <div class="game-controls mt-3">
+            <button onclick="startBlackjack()" class="btn btn-outline-primary" id="newGameBtn">New Game</button>
+            <button onclick="hitCard()" class="btn btn-outline-success" id="hitBtn" disabled>Hit</button>
+            <button onclick="standCard()" class="btn btn-outline-warning" id="standBtn" disabled>Stand</button>
+          </div>
+          
+          <div id="blackjackResult" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Poker Game Modal -->
+    <div id="pokerModal" class="game-modal">
+      <div class="game-content" style="max-width: 800px;">
+        <span class="close-game" onclick="closeGame('pokerModal')">&times;</span>
+        <h2>🎰 Texas Hold'em Poker vs AI</h2>
+        <p>Battle against AI opponents in a poker showdown!</p>
+        
+        <div class="poker-game">
+          <!-- Game Info -->
+          <div class="game-info mb-3">
+            <div class="row">
+              <div class="col-4">
+                <strong>Your Chips:</strong> <span id="playerChips">1000</span>
+              </div>
+              <div class="col-4">
+                <strong>Pot:</strong> <span id="potAmount">0</span>
+              </div>
+              <div class="col-4">
+                <strong>Round:</strong> <span id="gameRound">Pre-flop</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Community Cards -->
+          <div class="community-cards mb-4">
+            <h5>Community Cards</h5>
+            <div id="communityCards" class="card-area" style="min-height: 120px; border: 2px dashed #666; border-radius: 10px;">
+              <em>Cards will appear here...</em>
+            </div>
+          </div>
+
+          <!-- AI Players -->
+          <div class="ai-players mb-4">
+            <div class="row">
+              <div class="col-4">
+                <div class="ai-player" id="ai1">
+                  <h6>🤖 AI Player 1</h6>
+                  <div>Chips: <span id="ai1Chips">1000</span></div>
+                  <div>Status: <span id="ai1Status">Waiting</span></div>
+                  <div class="ai-cards">
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="ai-player" id="ai2">
+                  <h6>🤖 AI Player 2</h6>
+                  <div>Chips: <span id="ai2Chips">1000</span></div>
+                  <div>Status: <span id="ai2Status">Waiting</span></div>
+                  <div class="ai-cards">
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="ai-player" id="ai3">
+                  <h6>🤖 AI Player 3</h6>
+                  <div>Chips: <span id="ai3Chips">1000</span></div>
+                  <div>Status: <span id="ai3Status">Waiting</span></div>
+                  <div class="ai-cards">
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Player Hand -->
+          <div class="player-hand mb-4">
+            <h5>Your Hand</h5>
+            <div id="pokerCards" class="card-area"></div>
+            <div id="playerHandRank" class="mt-2"></div>
+          </div>
+
+          <!-- Betting Controls -->
+          <div class="betting-controls mt-3" id="bettingControls" style="display: none;">
+            <div class="mb-2">
+              <strong>Current Bet:</strong> <span id="currentBet">0</span> |
+              <strong>Your Bet:</strong> <span id="yourBet">0</span>
+            </div>
+            <div class="btn-group" role="group">
+              <button onclick="pokeFold()" class="btn btn-outline-danger">Fold</button>
+              <button onclick="pokeCall()" class="btn btn-outline-warning" id="callBtn">Call</button>
+              <button onclick="pokeRaise()" class="btn btn-outline-success" id="raiseBtn">Raise</button>
+            </div>
+            <div class="mt-2">
+              <label for="raiseAmount">Raise Amount:</label>
+              <input type="range" id="raiseAmount" min="10" max="100" value="20" class="form-control-range">
+              <span id="raiseDisplay">20</span> chips
+            </div>
+          </div>
+
+          <!-- Game Controls -->
+          <div class="poker-controls mt-3">
+            <button onclick="startTexasHoldem()" class="btn btn-outline-primary" id="newPokerBtn">New Game</button>
+          </div>
+          
+          <div id="pokerResult" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+        <h2>� Classic DOOM (1993)</h2>
+        <p>The legendary first-person shooter! Local DOOM files detected for instant loading!</p>
+        
+        <!-- Local File Status -->
+        <div class="mb-3" style="background: rgba(0,255,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid #28a745;">
+          <h6 style="color: #28a745; margin-bottom: 10px;">✅ Local DOOM Ready!</h6>
+          <div style="color: #888; font-size: 14px;">
+            <strong>GAME/</strong> folder with <strong>AUTOEXEC.BAT</strong> detected - ultra-fast loading!<br>
+            <small>FreeDOOM • Pre-extracted files • Zero processing time • Instant startup</small>
+          </div>
+        </div>
+        
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script>
+      function updateSectionFocus() {
+        const sections = document.querySelectorAll('.cv-section');
+        const windowCenter = window.innerHeight / 2;
+        let closest = null;
+        let minDist = Infinity;
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          const sectionCenter = rect.top + rect.height / 2;
+          const dist = Math.abs(windowCenter - sectionCenter);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = section;
+          }
+        });
+        const maxDist = window.innerHeight * 0.6;
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          const sectionCenter = rect.top + rect.height / 2;
+          const dist = Math.abs(windowCenter - sectionCenter);
+          let norm = Math.min(dist / maxDist, 1);
+          // Only scale, no opacity change
+          let scale = 1.08 - 0.15 * norm;
+          section.style.transform = `scale(${scale})`;
+          section.style.opacity = 1;
+          section.style.filter = 'none';
+          section.style.zIndex = Math.round(100 - norm * 50);
+        });
+      }
+      window.addEventListener('scroll', updateSectionFocus);
+      window.addEventListener('resize', updateSectionFocus);
+      document.addEventListener('DOMContentLoaded', updateSectionFocus);
+
+      // Easter Egg Game Functions
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add visual feedback for easter eggs
+        const easterEggs = document.querySelectorAll('.easter-egg');
+        easterEggs.forEach(egg => {
+          egg.style.cursor = 'pointer';
+          egg.style.textDecoration = 'underline';
+          egg.style.color = '#00fff7';
+        });
+        
+        // Easter egg click handlers with debugging
+        document.getElementById('hobby-egg').addEventListener('click', (e) => {
+          console.log('Hobby egg clicked - opening Tic Tac Toe');
+          e.preventDefault();
+          openGame('ticTacToeModal');
+        });
+        
+        document.getElementById('code-egg').addEventListener('click', (e) => {
+          console.log('Code egg clicked - opening Snake');
+          e.preventDefault();
+          openGame('snakeModal');
+        });
+        
+        document.getElementById('thinking-egg').addEventListener('click', (e) => {
+          console.log('Thinking egg clicked - opening Memory');
+          e.preventDefault();
+          openGame('memoryModal');
+        });
+        
+        document.getElementById('music-egg').addEventListener('click', (e) => {
+          console.log('Music egg clicked - opening Blackjack');
+          e.preventDefault();
+          openGame('blackjackModal');
+        });
+        
+        document.getElementById('luck-egg').addEventListener('click', (e) => {
+          console.log('Luck egg clicked - opening Poker');
+          e.preventDefault();
+          openGame('pokerModal');
+        });
+        
+        initializeTicTacToe();
+        initializeMemoryGame();
+        
+        // Easter Egg Help Function
+        function showEasterEggHelp() {
+          alert(`🥚 EASTER EGG HINTS! 🥚
+
+Find these hidden clickable words throughout my CV:
+
+🎯 In "About Me" - Look for "hobby" (Tic Tac Toe)
+🐍 In "About Me" - Look for "code" (Snake Game)  
+🧠 In "Hobbies" - Look for "thinking" (Memory Match)
+🃏 In "About Me" - Look for "games" (Blackjack)
+🎰 In "Hobbies" - Look for "card games" (Poker)
+
+Happy hunting! 🕵️‍♂️`);
+        }
+        
+        // Initialize card games
+        initializeCardGames();
+      });
+
+      function openGame(modalId) {
+        console.log('Opening game modal:', modalId);
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = 'block';
+          console.log('Modal opened successfully:', modalId);
+          if (modalId === 'memoryModal') resetMemory();
+        } else {
+          console.error('Modal not found:', modalId);
+        }
+      }
+
+      function closeGame(modalId) {
+        console.log('Closing game modal:', modalId);
+        document.getElementById(modalId).style.display = 'none';
+        if (modalId === 'snakeModal') stopSnake();
+      }
+
+      // Tic Tac Toe Game
+      let ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+      let currentPlayer = 'X';
+      let gameActive = true;
+
+      function initializeTicTacToe() {
+        const board = document.getElementById('ticTacToeBoard');
+        board.innerHTML = '';
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'tic-cell';
+          cell.setAttribute('data-index', i);
+          cell.addEventListener('click', handleTicTacToeClick);
+          board.appendChild(cell);
+        }
+      }
+
+      function handleTicTacToeClick(e) {
+        const index = e.target.getAttribute('data-index');
+        if (ticTacToeBoard[index] !== '' || !gameActive || currentPlayer !== 'X') return;
+        
+        ticTacToeBoard[index] = 'X';
+        e.target.textContent = 'X';
+        
+        if (checkTicTacToeWinner()) {
+          document.getElementById('ticTacToeResult').textContent = 'You win! 🎉';
+          gameActive = false;
+          return;
+        }
+        
+        if (ticTacToeBoard.every(cell => cell !== '')) {
+          document.getElementById('ticTacToeResult').textContent = 'It\'s a tie! 🤝';
+          gameActive = false;
+          return;
+        }
+        
+        currentPlayer = 'O';
+        setTimeout(makeAIMove, 500);
+      }
+
+      function makeAIMove() {
+        const emptyCells = ticTacToeBoard.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+        if (emptyCells.length === 0) return;
+        
+        const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        ticTacToeBoard[randomIndex] = 'O';
+        document.querySelector(`[data-index="${randomIndex}"]`).textContent = 'O';
+        
+        if (checkTicTacToeWinner()) {
+          document.getElementById('ticTacToeResult').textContent = 'AI wins! 🤖';
+          gameActive = false;
+          return;
+        }
+        
+        currentPlayer = 'X';
+      }
+
+      function checkTicTacToeWinner() {
+        const winPatterns = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8],
+          [0, 3, 6], [1, 4, 7], [2, 5, 8],
+          [0, 4, 8], [2, 4, 6]
+        ];
+        
+        return winPatterns.some(pattern => {
+          return pattern.every(index => ticTacToeBoard[index] === currentPlayer);
+        });
+      }
+
+      function resetTicTacToe() {
+        ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X';
+        gameActive = true;
+        document.getElementById('ticTacToeResult').textContent = '';
+        initializeTicTacToe();
+      }
+
+      // Snake Game
+      let snakeGame = {
+        canvas: null,
+        ctx: null,
+        snake: [{x: 160, y: 160}], // Centered on 320x320 grid
+        direction: {x: 0, y: 0},
+        food: {x: 0, y: 0},
+        score: 0,
+        gameLoop: null,
+        isRunning: false
+      };
+
+      function startSnake() {
+        snakeGame.canvas = document.getElementById('snakeCanvas');
+        snakeGame.ctx = snakeGame.canvas.getContext('2d');
+        snakeGame.snake = [{x: 160, y: 160}]; // Center on 320x320 canvas
+        snakeGame.direction = {x: 0, y: 0};
+        snakeGame.score = 0;
+        snakeGame.isRunning = true;
+        document.getElementById('snakeScore').textContent = 'Score: 0';
+        
+        generateFood();
+        drawSnake();
+        
+        if (snakeGame.gameLoop) clearInterval(snakeGame.gameLoop);
+        snakeGame.gameLoop = setInterval(updateSnake, 200);
+        
+        // Remove any existing event listeners first
+        document.removeEventListener('keydown', handleSnakeKeypress);
+        document.addEventListener('keydown', handleSnakeKeypress);
+      }
+
+      function stopSnake() {
+        snakeGame.isRunning = false;
+        if (snakeGame.gameLoop) {
+          clearInterval(snakeGame.gameLoop);
+          snakeGame.gameLoop = null;
+        }
+        document.removeEventListener('keydown', handleSnakeKeypress);
+      }
+
+      function handleSnakeKeypress(e) {
+        if (!snakeGame.isRunning) return;
+        
+        const key = e.key.toLowerCase();
+        e.preventDefault(); // Prevent page scrolling
+        
+        if ((key === 'arrowup' || key === 'w') && snakeGame.direction.y === 0) {
+          snakeGame.direction = {x: 0, y: -20};
+        } else if ((key === 'arrowdown' || key === 's') && snakeGame.direction.y === 0) {
+          snakeGame.direction = {x: 0, y: 20};
+        } else if ((key === 'arrowleft' || key === 'a') && snakeGame.direction.x === 0) {
+          snakeGame.direction = {x: -20, y: 0};
+        } else if ((key === 'arrowright' || key === 'd') && snakeGame.direction.x === 0) {
+          snakeGame.direction = {x: 20, y: 0};
+        }
+      }
+
+      function updateSnake() {
+        if (!snakeGame.isRunning) return;
+        
+        // Only move if there's a direction set
+        if (snakeGame.direction.x === 0 && snakeGame.direction.y === 0) {
+          drawSnake();
+          return;
+        }
+        
+        const head = {
+          x: snakeGame.snake[0].x + snakeGame.direction.x, 
+          y: snakeGame.snake[0].y + snakeGame.direction.y
+        };
+        
+        // Check wall collision
+        if (head.x < 0 || head.x >= 320 || head.y < 0 || head.y >= 320) {
+          gameOver();
+          return;
+        }
+        
+        // Check self collision
+        if (snakeGame.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+          gameOver();
+          return;
+        }
+        
+        snakeGame.snake.unshift(head);
+        
+        // Check food collision
+        if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
+          snakeGame.score++;
+          document.getElementById('snakeScore').textContent = 'Score: ' + snakeGame.score;
+          generateFood();
+        } else {
+          snakeGame.snake.pop();
+        }
+        
+        drawSnake();
+      }
+
+      function gameOver() {
+        stopSnake();
+        alert('Game Over! Final Score: ' + snakeGame.score + '\nPress "Start Game" to play again!');
+      }
+
+      function generateFood() {
+        let foodX, foodY;
+        do {
+          foodX = Math.floor(Math.random() * 16) * 20; // 16 grid spaces (320/20)
+          foodY = Math.floor(Math.random() * 16) * 20;
+        } while (snakeGame.snake.some(segment => segment.x === foodX && segment.y === foodY));
+        
+        snakeGame.food = { x: foodX, y: foodY };
+      }
+
+      function drawSnake() {
+        if (!snakeGame.ctx) return;
+        
+        // Clear canvas
+        snakeGame.ctx.fillStyle = '#232526';
+        snakeGame.ctx.fillRect(0, 0, 320, 320);
+        
+        // Draw snake
+        snakeGame.snake.forEach((segment, index) => {
+          if (index === 0) {
+            // Draw head slightly different
+            snakeGame.ctx.fillStyle = '#00fff7';
+          } else {
+            snakeGame.ctx.fillStyle = '#66ffff';
+          }
+          snakeGame.ctx.fillRect(segment.x, segment.y, 20, 20);
+        });
+        
+        // Draw food
+        snakeGame.ctx.fillStyle = '#ff0000';
+        snakeGame.ctx.fillRect(snakeGame.food.x, snakeGame.food.y, 20, 20);
+      }
+
+      // Memory Game
+      let memoryGame = {
+        cards: [],
+        flippedCards: [],
+        matches: 0,
+        canFlip: true
+      };
+
+      function initializeMemoryGame() {
+        const symbols = ['🎮', '💻', '🚀', '⭐', '🎯', '🎨', '🎵', '⚡'];
+        memoryGame.cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+        memoryGame.flippedCards = [];
+        memoryGame.matches = 0;
+        memoryGame.canFlip = true;
+      }
+
+      function resetMemory() {
+        initializeMemoryGame();
+        const board = document.getElementById('memoryBoard');
+        board.innerHTML = '';
+        
+        memoryGame.cards.forEach((symbol, index) => {
+          const card = document.createElement('div');
+          card.className = 'memory-card';
+          card.setAttribute('data-index', index);
+          card.addEventListener('click', flipMemoryCard);
+          board.appendChild(card);
+        });
+        
+        document.getElementById('memoryResult').textContent = 'Matches: 0/8';
+      }
+
+      function flipMemoryCard(e) {
+        if (!memoryGame.canFlip || e.target.classList.contains('flipped') || e.target.classList.contains('matched')) return;
+        
+        const index = e.target.getAttribute('data-index');
+        e.target.textContent = memoryGame.cards[index];
+        e.target.classList.add('flipped');
+        memoryGame.flippedCards.push({element: e.target, index: index});
+        
+        if (memoryGame.flippedCards.length === 2) {
+          memoryGame.canFlip = false;
+          setTimeout(checkMemoryMatch, 1000);
+        }
+      }
+
+      function checkMemoryMatch() {
+        const [card1, card2] = memoryGame.flippedCards;
+        
+        if (memoryGame.cards[card1.index] === memoryGame.cards[card2.index]) {
+          card1.element.classList.add('matched');
+          card2.element.classList.add('matched');
+          memoryGame.matches++;
+          document.getElementById('memoryResult').textContent = `Matches: ${memoryGame.matches}/8`;
+          
+          if (memoryGame.matches === 8) {
+            setTimeout(() => alert('Congratulations! You found all matches! 🎉'), 500);
+          }
+        } else {
+          card1.element.textContent = '';
+          card2.element.textContent = '';
+          card1.element.classList.remove('flipped');
+          card2.element.classList.remove('flipped');
+        }
+        
+        memoryGame.flippedCards = [];
+        memoryGame.canFlip = true;
+      }
+
+      // Card Game Implementations
+      function initializeCardGames() {
+        console.log('Card games initialized!');
+      }
+
+      // Blackjack Game
+      let blackjackGame = {
+        deck: [],
+        playerHand: [],
+        dealerHand: [],
+        gameActive: false
+      };
+
+      function createDeck() {
+        const suits = ['♠', '♥', '♦', '♣'];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const deck = [];
+        
+        for (let suit of suits) {
+          for (let value of values) {
+            deck.push({ suit, value, numValue: getCardValue(value) });
+          }
+        }
+        
+        return shuffleDeck(deck);
+      }
+
+      function getCardValue(value) {
+        if (value === 'A') return 11;
+        if (['J', 'Q', 'K'].includes(value)) return 10;
+        return parseInt(value);
+      }
+
+      function shuffleDeck(deck) {
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        return deck;
+      }
+
+      function calculateScore(hand) {
+        let score = 0;
+        let aces = 0;
+        
+        for (let card of hand) {
+          if (card.value === 'A') {
+            aces++;
+            score += 11;
+          } else {
+            score += card.numValue;
+          }
+        }
+        
+        while (score > 21 && aces > 0) {
+          score -= 10;
+          aces--;
+        }
+        
+        return score;
+      }
+
+      function renderCard(card) {
+        const color = ['♥', '♦'].includes(card.suit) ? 'red' : 'black';
+        return `<div class="playing-card" style="display: inline-block; background: white; border: 1px solid #000; border-radius: 8px; width: 60px; height: 90px; margin: 5px; text-align: center; color: ${color}; font-size: 14px; padding: 5px;">
+          <div style="font-weight: bold;">${card.value}</div>
+          <div style="font-size: 18px;">${card.suit}</div>
+        </div>`;
+      }
+
+      function startBlackjack() {
+        blackjackGame.deck = createDeck();
+        blackjackGame.playerHand = [];
+        blackjackGame.dealerHand = [];
+        blackjackGame.gameActive = true;
+        
+        // Deal initial cards
+        blackjackGame.playerHand.push(blackjackGame.deck.pop());
+        blackjackGame.dealerHand.push(blackjackGame.deck.pop());
+        blackjackGame.playerHand.push(blackjackGame.deck.pop());
+        blackjackGame.dealerHand.push(blackjackGame.deck.pop());
+        
+        updateBlackjackDisplay();
+        
+        document.getElementById('hitBtn').disabled = false;
+        document.getElementById('standBtn').disabled = false;
+        document.getElementById('blackjackResult').innerHTML = '';
+      }
+
+      function updateBlackjackDisplay() {
+        const playerCards = document.getElementById('playerCards');
+        const dealerCards = document.getElementById('dealerCards');
+        const playerScore = document.getElementById('playerScore');
+        const dealerScore = document.getElementById('dealerScore');
+        
+        playerCards.innerHTML = blackjackGame.playerHand.map(card => renderCard(card)).join('');
+        playerScore.innerHTML = `Score: ${calculateScore(blackjackGame.playerHand)}`;
+        
+        if (blackjackGame.gameActive) {
+          // Show only first dealer card
+          dealerCards.innerHTML = renderCard(blackjackGame.dealerHand[0]) + 
+            '<div class="playing-card" style="display: inline-block; background: #333; border: 1px solid #000; border-radius: 8px; width: 60px; height: 90px; margin: 5px; text-align: center; color: white; font-size: 20px; line-height: 90px;">?</div>';
+          dealerScore.innerHTML = 'Score: ?';
+        } else {
+          // Show all dealer cards
+          dealerCards.innerHTML = blackjackGame.dealerHand.map(card => renderCard(card)).join('');
+          dealerScore.innerHTML = `Score: ${calculateScore(blackjackGame.dealerHand)}`;
+        }
+      }
+
+      function hitCard() {
+        if (!blackjackGame.gameActive) return;
+        
+        blackjackGame.playerHand.push(blackjackGame.deck.pop());
+        updateBlackjackDisplay();
+        
+        const playerScore = calculateScore(blackjackGame.playerHand);
+        if (playerScore > 21) {
+          endBlackjackGame('You busted! Dealer wins. 😞');
+        } else if (playerScore === 21) {
+          standCard(); // Auto-stand on 21
+        }
+      }
+
+      function standCard() {
+        if (!blackjackGame.gameActive) return;
+        
+        blackjackGame.gameActive = false;
+        
+        // Dealer draws cards
+        while (calculateScore(blackjackGame.dealerHand) < 17) {
+          blackjackGame.dealerHand.push(blackjackGame.deck.pop());
+        }
+        
+        updateBlackjackDisplay();
+        
+        const playerScore = calculateScore(blackjackGame.playerHand);
+        const dealerScore = calculateScore(blackjackGame.dealerHand);
+        
+        let result;
+        if (dealerScore > 21) {
+          result = 'Dealer busted! You win! 🎉';
+        } else if (playerScore > dealerScore) {
+          result = 'You win! 🎉';
+        } else if (dealerScore > playerScore) {
+          result = 'Dealer wins. 😞';
+        } else {
+          result = "It's a tie! 🤝";
+        }
+        
+        endBlackjackGame(result);
+      }
+
+      function endBlackjackGame(message) {
+        blackjackGame.gameActive = false;
+        document.getElementById('hitBtn').disabled = true;
+        document.getElementById('standBtn').disabled = true;
+        document.getElementById('blackjackResult').innerHTML = `<div class="alert alert-info">${message}</div>`;
+      }
+
+      // Poker Game (Texas Hold'em vs AI)
+      let texasHoldemGame = {
+        deck: [],
+        playerHand: [],
+        communityCards: [],
+        aiPlayers: [
+          { id: 'ai1', hand: [], chips: 1000, currentBet: 0, status: 'active', personality: 'aggressive' },
+          { id: 'ai2', hand: [], chips: 1000, currentBet: 0, status: 'active', personality: 'conservative' },
+          { id: 'ai3', hand: [], chips: 1000, currentBet: 0, status: 'active', personality: 'balanced' }
+        ],
+        playerChips: 1000,
+        playerBet: 0,
+        pot: 0,
+        currentBet: 0,
+        gamePhase: 'preflop', // preflop, flop, turn, river, showdown
+        playerTurn: true,
+        gameActive: false
+      };
+
+      function startTexasHoldem() {
+        // Reset game state
+        texasHoldemGame.deck = createDeck();
+        texasHoldemGame.playerHand = [];
+        texasHoldemGame.communityCards = [];
+        texasHoldemGame.pot = 0;
+        texasHoldemGame.currentBet = 0;
+        texasHoldemGame.playerBet = 0;
+        texasHoldemGame.gamePhase = 'preflop';
+        texasHoldemGame.playerTurn = true;
+        texasHoldemGame.gameActive = true;
+
+        // Reset AI players
+        texasHoldemGame.aiPlayers.forEach(ai => {
+          ai.hand = [];
+          ai.currentBet = 0;
+          ai.status = 'active';
+        });
+
+        // Deal hole cards (2 cards to each player)
+        for (let i = 0; i < 2; i++) {
+          texasHoldemGame.playerHand.push(texasHoldemGame.deck.pop());
+          texasHoldemGame.aiPlayers.forEach(ai => {
+            ai.hand.push(texasHoldemGame.deck.pop());
+          });
+        }
+
+        updateTexasHoldemDisplay();
+        document.getElementById('bettingControls').style.display = 'block';
+        document.getElementById('pokerResult').innerHTML = '';
+        
+        // Start betting round
+        setTimeout(() => {
+          aiMakeDecisions();
+        }, 1000);
+      }
+
+      function updateTexasHoldemDisplay() {
+        // Update player hand
+        document.getElementById('pokerCards').innerHTML = 
+          texasHoldemGame.playerHand.map(card => renderCard(card)).join('');
+        
+        // Update community cards
+        const communityDiv = document.getElementById('communityCards');
+        if (texasHoldemGame.communityCards.length === 0) {
+          communityDiv.innerHTML = '<em>Cards will appear here...</em>';
+        } else {
+          communityDiv.innerHTML = texasHoldemGame.communityCards.map(card => renderCard(card)).join('');
+        }
+
+        // Update player info
+        document.getElementById('playerChips').textContent = texasHoldemGame.playerChips;
+        document.getElementById('potAmount').textContent = texasHoldemGame.pot;
+        document.getElementById('gameRound').textContent = texasHoldemGame.gamePhase;
+        document.getElementById('currentBet').textContent = texasHoldemGame.currentBet;
+        document.getElementById('yourBet').textContent = texasHoldemGame.playerBet;
+
+        // Update AI players
+        texasHoldemGame.aiPlayers.forEach(ai => {
+          document.getElementById(`${ai.id}Chips`).textContent = ai.chips;
+          document.getElementById(`${ai.id}Status`).textContent = ai.status;
+        });
+
+        // Update player hand rank if community cards are available
+        if (texasHoldemGame.communityCards.length >= 3) {
+          const bestHand = getBestPokerHand([...texasHoldemGame.playerHand, ...texasHoldemGame.communityCards]);
+          document.getElementById('playerHandRank').innerHTML = `<strong>Best Hand:</strong> ${bestHand.rank}`;
+        }
+      }
+
+      function pokeFold() {
+        if (!texasHoldemGame.gameActive || !texasHoldemGame.playerTurn) return;
+        
+        texasHoldemGame.playerTurn = false;
+        document.getElementById('bettingControls').style.display = 'none';
+        document.getElementById('pokerResult').innerHTML = '<div class="alert alert-danger">You folded! AI wins this round.</div>';
+        
+        // Give pot to remaining AI players
+        const activeAIs = texasHoldemGame.aiPlayers.filter(ai => ai.status === 'active');
+        if (activeAIs.length > 0) {
+          activeAIs[0].chips += texasHoldemGame.pot;
+        }
+        
+        texasHoldemGame.gameActive = false;
+      }
+
+      function pokeCall() {
+        if (!texasHoldemGame.gameActive || !texasHoldemGame.playerTurn) return;
+        
+        const callAmount = texasHoldemGame.currentBet - texasHoldemGame.playerBet;
+        if (callAmount > texasHoldemGame.playerChips) {
+          alert("Not enough chips to call!");
+          return;
+        }
+        
+        texasHoldemGame.playerChips -= callAmount;
+        texasHoldemGame.playerBet += callAmount;
+        texasHoldemGame.pot += callAmount;
+        
+        updateTexasHoldemDisplay();
+        nextGamePhase();
+      }
+
+      function pokeRaise() {
+        if (!texasHoldemGame.gameActive || !texasHoldemGame.playerTurn) return;
+        
+        const raiseAmount = parseInt(document.getElementById('raiseAmount').value);
+        const totalBet = texasHoldemGame.currentBet + raiseAmount;
+        const playerContribution = totalBet - texasHoldemGame.playerBet;
+        
+        if (playerContribution > texasHoldemGame.playerChips) {
+          alert("Not enough chips to raise!");
+          return;
+        }
+        
+        texasHoldemGame.playerChips -= playerContribution;
+        texasHoldemGame.playerBet = totalBet;
+        texasHoldemGame.currentBet = totalBet;
+        texasHoldemGame.pot += playerContribution;
+        
+        updateTexasHoldemDisplay();
+        
+        // AI players respond to raise
+        setTimeout(() => {
+          aiRespondToRaise();
+        }, 1000);
+      }
+
+      function nextGamePhase() {
+        switch (texasHoldemGame.gamePhase) {
+          case 'preflop':
+            // Deal the flop (3 community cards)
+            for (let i = 0; i < 3; i++) {
+              texasHoldemGame.communityCards.push(texasHoldemGame.deck.pop());
+            }
+            texasHoldemGame.gamePhase = 'flop';
+            break;
+          case 'flop':
+            // Deal the turn (1 community card)
+            texasHoldemGame.communityCards.push(texasHoldemGame.deck.pop());
+            texasHoldemGame.gamePhase = 'turn';
+            break;
+          case 'turn':
+            // Deal the river (1 community card)
+            texasHoldemGame.communityCards.push(texasHoldemGame.deck.pop());
+            texasHoldemGame.gamePhase = 'river';
+            break;
+          case 'river':
+            // Showdown
+            showdown();
+            return;
+        }
+        
+        updateTexasHoldemDisplay();
+        
+        // Next betting round
+        setTimeout(() => {
+          aiMakeDecisions();
+        }, 1500);
+      }
+
+      function aiMakeDecisions() {
+        if (!texasHoldemGame.gameActive) return;
+        
+        texasHoldemGame.aiPlayers.forEach((ai, index) => {
+          if (ai.status !== 'active') return;
+          
+          setTimeout(() => {
+            const decision = getAIDecision(ai);
+            executeAIDecision(ai, decision);
+          }, (index + 1) * 1000);
+        });
+        
+        // Re-enable player controls after AI decisions
+        setTimeout(() => {
+          if (texasHoldemGame.gameActive) {
+            texasHoldemGame.playerTurn = true;
+          }
+        }, 4000);
+      }
+
+      function getAIDecision(ai) {
+        const handStrength = evaluateHandStrength([...ai.hand, ...texasHoldemGame.communityCards]);
+        const potOdds = texasHoldemGame.pot / (texasHoldemGame.currentBet || 1);
+        
+        // Personality-based decision making
+        let aggressionFactor = 0.5;
+        switch (ai.personality) {
+          case 'aggressive':
+            aggressionFactor = 0.8;
+            break;
+          case 'conservative':
+            aggressionFactor = 0.3;
+            break;
+          case 'balanced':
+            aggressionFactor = 0.5;
+            break;
+        }
+        
+        const decision = Math.random() * aggressionFactor + handStrength * 0.7;
+        
+        if (decision < 0.3) return 'fold';
+        if (decision < 0.6) return 'call';
+        return 'raise';
+      }
+
+      function executeAIDecision(ai, decision) {
+        switch (decision) {
+          case 'fold':
+            ai.status = 'folded';
+            document.getElementById(`${ai.id}Status`).textContent = '❌ Folded';
+            break;
+          case 'call':
+            const callAmount = Math.max(0, texasHoldemGame.currentBet - ai.currentBet);
+            ai.chips -= callAmount;
+            ai.currentBet += callAmount;
+            texasHoldemGame.pot += callAmount;
+            document.getElementById(`${ai.id}Status`).textContent = '✅ Called';
+            break;
+          case 'raise':
+            const raiseAmount = Math.floor(Math.random() * 50) + 20;
+            const totalBet = texasHoldemGame.currentBet + raiseAmount;
+            const aiContribution = totalBet - ai.currentBet;
+            ai.chips -= aiContribution;
+            ai.currentBet = totalBet;
+            texasHoldemGame.currentBet = totalBet;
+            texasHoldemGame.pot += aiContribution;
+            document.getElementById(`${ai.id}Status`).textContent = `🔥 Raised ${raiseAmount}`;
+            break;
+        }
+        updateTexasHoldemDisplay();
+      }
+
+      function aiRespondToRaise() {
+        // Simplified AI response to player raise
+        texasHoldemGame.aiPlayers.forEach((ai, index) => {
+          if (ai.status !== 'active') return;
+          
+          setTimeout(() => {
+            const decision = Math.random() > 0.6 ? 'call' : 'fold';
+            executeAIDecision(ai, decision);
+          }, (index + 1) * 800);
+        });
+        
+        setTimeout(() => {
+          nextGamePhase();
+        }, 3000);
+      }
+
+      function evaluateHandStrength(cards) {
+        if (cards.length < 5) return Math.random() * 0.5; // Early game uncertainty
+        
+        const bestHand = getBestPokerHand(cards);
+        const strengthMap = {
+          'High Card': 0.1,
+          'One Pair': 0.2,
+          'Two Pair': 0.4,
+          'Three of a Kind': 0.6,
+          'Straight': 0.7,
+          'Flush': 0.8,
+          'Full House': 0.9,
+          'Four of a Kind': 0.95,
+          'Straight Flush': 1.0
+        };
+        
+        return strengthMap[bestHand.rank] || 0.1;
+      }
+
+      function getBestPokerHand(cards) {
+        if (cards.length < 5) return { rank: 'High Card', cards: cards };
+        
+        // Simplified hand evaluation - in a real game you'd check all 5-card combinations
+        const values = cards.map(card => card.value);
+        const suits = cards.map(card => card.suit);
+        
+        // Count values
+        const valueCounts = {};
+        values.forEach(value => {
+          valueCounts[value] = (valueCounts[value] || 0) + 1;
+        });
+        
+        const counts = Object.values(valueCounts).sort((a, b) => b - a);
+        const isFlush = suits.some(suit => suits.filter(s => s === suit).length >= 5);
+        
+        if (counts[0] === 4) return { rank: 'Four of a Kind', cards: cards };
+        if (counts[0] === 3 && counts[1] === 2) return { rank: 'Full House', cards: cards };
+        if (isFlush) return { rank: 'Flush', cards: cards };
+        if (counts[0] === 3) return { rank: 'Three of a Kind', cards: cards };
+        if (counts[0] === 2 && counts[1] === 2) return { rank: 'Two Pair', cards: cards };
+        if (counts[0] === 2) return { rank: 'One Pair', cards: cards };
+        
+        return { rank: 'High Card', cards: cards };
+      }
+
+      function showdown() {
+        texasHoldemGame.gameActive = false;
+        document.getElementById('bettingControls').style.display = 'none';
+        
+        // Evaluate all hands
+        const playerBestHand = getBestPokerHand([...texasHoldemGame.playerHand, ...texasHoldemGame.communityCards]);
+        const results = [];
+        
+        results.push({ player: 'You', hand: playerBestHand, chips: texasHoldemGame.playerChips });
+        
+        texasHoldemGame.aiPlayers.forEach((ai, index) => {
+          if (ai.status === 'active') {
+            const aiBestHand = getBestPokerHand([...ai.hand, ...texasHoldemGame.communityCards]);
+            results.push({ player: `AI ${index + 1}`, hand: aiBestHand, chips: ai.chips });
+          }
+        });
+        
+        // Simple winner determination (in real poker, you'd compare hand values more precisely)
+        const handRankings = ['High Card', 'One Pair', 'Two Pair', 'Three of a Kind', 'Straight', 'Flush', 'Full House', 'Four of a Kind', 'Straight Flush'];
+        
+        results.sort((a, b) => {
+          const aRank = handRankings.indexOf(a.hand.rank);
+          const bRank = handRankings.indexOf(b.hand.rank);
+          return bRank - aRank;
+        });
+        
+        const winner = results[0];
+        
+        let resultHTML = '<div class="alert alert-info"><h5>🏆 Showdown Results!</h5>';
+        results.forEach((result, index) => {
+          const badge = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+          resultHTML += `<div>${badge} <strong>${result.player}:</strong> ${result.hand.rank}</div>`;
+        });
+        
+        if (winner.player === 'You') {
+          texasHoldemGame.playerChips += texasHoldemGame.pot;
+          resultHTML += '<div class="mt-2"><strong>🎉 You win the pot!</strong></div>';
+        } else {
+          resultHTML += `<div class="mt-2"><strong>😞 ${winner.player} wins the pot!</strong></div>`;
+        }
+        
+        resultHTML += '</div>';
+        document.getElementById('pokerResult').innerHTML = resultHTML;
+      }
+
+      // Update raise amount display
+      document.addEventListener('DOMContentLoaded', function() {
+        const raiseSlider = document.getElementById('raiseAmount');
+        const raiseDisplay = document.getElementById('raiseDisplay');
+        
+        if (raiseSlider && raiseDisplay) {
+          raiseSlider.addEventListener('input', function() {
+            raiseDisplay.textContent = this.value;
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
