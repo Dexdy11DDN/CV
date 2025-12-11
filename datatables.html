@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uma Musume DataTables - Dexter Dy B. Nievares</title>
+    
+    <!-- Google Fonts - Match CV -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- DataTables CSS with Bootstrap 5 styling -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/select/1.7.0/css/select.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #222;
+            --text-color: #fff;
+            --text-muted: #aaa;
+            --border-color: #444;
+            --accent: #00fff7;
+        }
+        
+        body {
+            background: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-color);
+            font-family: 'Share Tech Mono', 'Consolas', 'monospace', Arial, sans-serif;
+        }
+        
+        .container-fluid {
+            max-width: 1600px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        /* Character Portraits */
+        .char-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .char-portrait {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            background: var(--card-bg);
+            flex-shrink: 0;
+        }
+        
+        .char-portrait.loading {
+            background: linear-gradient(90deg, var(--card-bg) 25%, #333 50%, var(--card-bg) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .char-portrait-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
+        }
+        
+        .char-initials {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent);
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border-color: var(--accent);
+        }
+        
+        .char-name {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        /* Portrait Verification Mode */
+        .verify-mode .char-id {
+            display: inline;
+            font-size: 10px;
+            color: var(--accent);
+            margin-left: 5px;
+        }
+        
+        .char-id {
+            display: none;
+        }
+        
+        .char-portrait.verified {
+            border-color: #2ecc71;
+        }
+        
+        .char-portrait.failed {
+            border-color: #e74c3c;
+        }
+        
+        .verify-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            background: var(--card-bg);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 25px rgba(0, 255, 247, 0.2);
+        }
+        
+        .verify-panel.active {
+            display: block;
+        }
+        
+        .verify-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .verify-stat {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .verify-stat.loaded {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        
+        .verify-stat.failed {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        .verify-stat.pending {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+        
+        .verify-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .verify-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .failed-list {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #e74c3c;
+        }
+        
+        .verify-toggle-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .verify-toggle-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.5);
+        }
+        
+        .verify-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+        
+        .stat-loaded { color: #2ecc71; }
+        .stat-failed { color: #e74c3c; }
+        .stat-pending { color: #f1c40f; }
+        
+        /* Tabs */
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            border-radius: 8px 8px 0 0;
+            padding: 10px 20px;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--border-color) var(--border-color) transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: var(--card-bg);
+            color: var(--accent);
+            border-color: var(--border-color) var(--border-color) var(--card-bg);
+        }
+        
+        .tab-content {
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        /* DataTable */
+        table.dataTable {
+            color: var(--text-color) !important;
+            font-size: 14px;
+            background: var(--bg-color) !important;
+            border-collapse: collapse !important;
+        }
+        
+        table.dataTable thead th {
+            background: #2a2a2a !important;
+            color: var(--accent) !important;
+            border: 1px solid var(--border-color) !important;
+            padding: 12px 8px !important;
+            text-align: center !important;
+        }
+        
+        table.dataTable tbody tr {
+            background: #1e1e1e !important;
+        }
+        
+        table.dataTable tbody tr:nth-child(even) {
+            background: #252525 !important;
+        }
+        
+        table.dataTable tbody tr:hover {
+            background: #333 !important;
+        }
+        
+        table.dataTable tbody tr.selected {
+            background: rgba(0, 255, 247, 0.2) !important;
+        }
+        
+        table.dataTable tbody td {
+            border: 1px solid var(--border-color) !important;
+            text-align: center !important;
+            padding: 10px 8px !important;
+            color: var(--text-color) !important;
+            background: transparent !important;
+        }
+        
+        /* Character Name - White */
+        table.dataTable tbody td:first-child {
+            color: #fff !important;
+            font-weight: bold;
+            text-align: left !important;
+        }
+        
+        /* Bootstrap overrides */
+        .table, .table-striped, .table-bordered {
+            --bs-table-bg: transparent;
+            --bs-table-striped-bg: transparent;
+            --bs-table-hover-bg: transparent;
+            --bs-table-border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        /* Grade Letters */
+        .grade {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .grade-A { color: #ff9f43; }
+        .grade-B { color: #ff6b9d; }
+        .grade-C { color: #2ecc71; }
+        .grade-D { color: #3498db; }
+        .grade-E { color: #9b59b6; }
+        .grade-F { color: #c9a0dc; }
+        .grade-G { color: #777; }
+        
+        /* Control Sections */
+        .sort-controls,
+        .column-search,
+        .column-toggles {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .sort-controls label,
+        .column-search strong,
+        .column-toggles strong {
+            color: var(--text-color);
+        }
+        
+        .sort-controls select,
+        .column-search input {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            padding: 8px 12px;
+        }
+        
+        .sort-controls select:focus,
+        .column-search input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .sort-controls select option {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .column-search input::placeholder {
+            color: #666;
+        }
+        
+        .sort-hint {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        /* Toggle Buttons */
+        .column-toggles .btn {
+            margin: 3px;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        
+        .toggle-btn-active {
+            background: var(--accent) !important;
+            color: #000 !important;
+            border-color: var(--accent) !important;
+        }
+        
+        .toggle-btn-inactive {
+            background: transparent !important;
+            color: #666 !important;
+            border-color: #666 !important;
+        }
+        
+        .toggle-category {
+            color: var(--text-muted);
+            font-size: 10px;
+            margin-right: 5px;
+        }
+        
+        /* Delete Button */
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-delete:hover {
+            background: #a93226;
+            color: white;
+        }
+        
+        .btn-delete:disabled {
+            background: #555;
+            color: #888;
+        }
+        
+        /* Pagination */
+        .dataTables_paginate {
+            text-align: center !important;
+            float: none !important;
+            margin-bottom: 15px;
+        }
+        
+        .dataTables_paginate .paginate_button {
+            color: var(--text-color) !important;
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 4px !important;
+            margin: 0 2px !important;
+            padding: 5px 12px !important;
+        }
+        
+        .dataTables_paginate .paginate_button:hover {
+            background: #444 !important;
+            color: var(--accent) !important;
+        }
+        
+        .dataTables_paginate .paginate_button.current {
+            background: var(--accent) !important;
+            color: #000 !important;
+            border-color: var(--accent) !important;
+        }
+        
+        .dataTables_paginate .paginate_button.disabled {
+            color: #555 !important;
+        }
+        
+        /* Length & Info */
+        .dataTables_length {
+            float: left !important;
+            margin-top: 15px;
+        }
+        
+        .dataTables_length select {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            padding: 5px;
+        }
+        
+        .dataTables_length label,
+        .dataTables_info {
+            color: var(--text-muted);
+        }
+        
+        .dataTables_info {
+            float: left !important;
+            clear: left !important;
+            margin-top: 10px;
+        }
+        
+        .dataTables_filter {
+            display: none !important;
+        }
+        
+        /* Layout */
+        .table-controls-top {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .table-controls-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 15px;
+        }
+        
+        /* Back Link */
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        /* Main Wrapper */
+        .main-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Verification Panel (floating) -->
+    <div id="verifyPanel" class="verify-panel">
+        <h5>🔍 Portrait Verification</h5>
+        <div class="verify-stats">
+            <span class="stat-loaded">✅ Loaded: <span id="loadedCount">0</span></span>
+            <span class="stat-failed">❌ Failed: <span id="failedCount">0</span></span>
+            <span class="stat-pending">⏳ Pending: <span id="pendingCount">0</span></span>
+        </div>
+        <div id="failedList" class="failed-list"></div>
+        <p class="verify-note">Character IDs shown in [brackets] next to names</p>
+    </div>
+    
+    <div class="container-fluid">
+        <a href="index.html" class="back-link">← Back to CV</a>
+        
+        <h1>🏇 Uma Musume Aptitude Database</h1>
+        
+        <!-- Verification Toggle -->
+        <button class="btn verify-toggle-btn" onclick="toggleVerifyMode()">
+            🔍 Toggle Portrait Debug Mode
+        </button>
+        
+        <div class="main-content">
+        
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="tableTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">
+                    🏇 Full Aptitude View
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">
+                    📊 Comparison View
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                
+                <!-- Sort Controls -->
+                <div class="sort-controls">
+                    <div>
+                        <label for="sortColumn1">📊 Sort by:</label>
+                        <select id="sortColumn1" class="sort-dropdown">
+                            <option value="0">Name</option>
+                            <optgroup label="Surface">
+                                <option value="1">Turf</option>
+                                <option value="2">Dirt</option>
+                            </optgroup>
+                            <optgroup label="Distance">
+                                <option value="3">Sprint</option>
+                                <option value="4">Mile</option>
+                                <option value="5">Medium</option>
+                                <option value="6">Long</option>
+                            </optgroup>
+                            <optgroup label="Running Style">
+                                <option value="7">Front</option>
+                                <option value="8">Pace</option>
+                                <option value="9">Late</option>
+                                <option value="10">End</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sortOrder1">Order:</label>
+                        <select id="sortOrder1" class="sort-order">
+                            <option value="asc">A → Z / A → G (Best First)</option>
+                            <option value="desc">Z → A / G → A (Worst First)</option>
+                        </select>
+                    </div>
+                    <span class="sort-hint">💡 Tip: Hold Shift + Click column headers for multi-column sort</span>
+                </div>
+                
+                <!-- Column Toggles -->
+                <div class="column-toggles">
+                    <strong>👁️ Show/Hide Columns:</strong>
+                    <div class="mt-2" id="columnToggles1">
+                        <!-- Column toggle buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Column Search -->
+                <div class="column-search">
+                    <strong>🔍 Search by Column:</strong>
+                    <div class="row mt-2" id="columnSearch1">
+                        <!-- Column search inputs will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Delete Button -->
+                <button class="btn btn-delete" id="deleteBtn1" disabled>
+                    🗑️ Delete Selected Row
+                </button>
+                
+                <!-- DataTable 1 -->
+                <div class="table-responsive">
+                    <table id="dataTable1" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Name</th>
+                                <th colspan="2" style="background: rgba(255, 107, 157, 0.2) !important;">Surface</th>
+                                <th colspan="4" style="background: rgba(72, 219, 251, 0.2) !important;">Distance</th>
+                                <th colspan="4" style="background: rgba(29, 209, 161, 0.2) !important;">Running Style</th>
+                            </tr>
+                            <tr>
+                                <th style="background: rgba(255, 107, 157, 0.15) !important;">Turf</th>
+                                <th style="background: rgba(255, 107, 157, 0.15) !important;">Dirt</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Sprint</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Mile</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Medium</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Long</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Front</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Pace</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Late</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">End</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data loaded via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                
+                <!-- Sort Controls -->
+                <div class="sort-controls">
+                    <div>
+                        <label for="sortColumn2">📊 Sort by:</label>
+                        <select id="sortColumn2" class="sort-dropdown">
+                            <option value="0">Name</option>
+                            <optgroup label="Surface">
+                                <option value="1">Turf</option>
+                                <option value="2">Dirt</option>
+                            </optgroup>
+                            <optgroup label="Distance">
+                                <option value="3">Sprint</option>
+                                <option value="4">Mile</option>
+                                <option value="5">Medium</option>
+                                <option value="6">Long</option>
+                            </optgroup>
+                            <optgroup label="Running Style">
+                                <option value="7">Front</option>
+                                <option value="8">Pace</option>
+                                <option value="9">Late</option>
+                                <option value="10">End</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sortOrder2">Order:</label>
+                        <select id="sortOrder2" class="sort-order">
+                            <option value="asc">A → Z / A → G (Best First)</option>
+                            <option value="desc">Z → A / G → A (Worst First)</option>
+                        </select>
+                    </div>
+                    <span class="sort-hint">💡 Tip: Hold Shift + Click column headers for multi-column sort</span>
+                </div>
+                
+                <!-- Column Toggles -->
+                <div class="column-toggles">
+                    <strong>👁️ Show/Hide Columns:</strong>
+                    <div class="mt-2" id="columnToggles2">
+                        <!-- Column toggle buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Column Search -->
+                <div class="column-search">
+                    <strong>🔍 Search by Column:</strong>
+                    <div class="row mt-2" id="columnSearch2">
+                        <!-- Column search inputs will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Delete Button -->
+                <button class="btn btn-delete" id="deleteBtn2" disabled>
+                    🗑️ Delete Selected Row
+                </button>
+                
+                <!-- DataTable 2 -->
+                <div class="table-responsive">
+                    <table id="dataTable2" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Name</th>
+                                <th colspan="2" style="background: rgba(255, 107, 157, 0.2) !important;">Surface</th>
+                                <th colspan="4" style="background: rgba(72, 219, 251, 0.2) !important;">Distance</th>
+                                <th colspan="4" style="background: rgba(29, 209, 161, 0.2) !important;">Running Style</th>
+                            </tr>
+                            <tr>
+                                <th style="background: rgba(255, 107, 157, 0.15) !important;">Turf</th>
+                                <th style="background: rgba(255, 107, 157, 0.15) !important;">Dirt</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Sprint</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Mile</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Medium</th>
+                                <th style="background: rgba(72, 219, 251, 0.15) !important;">Long</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Front</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Pace</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">Late</th>
+                                <th style="background: rgba(29, 209, 161, 0.15) !important;">End</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data loaded via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div> <!-- Close main-content -->
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
+    <script>
+        // Uma Musume character data with aptitudes - Comprehensive List
+        const umaMusumeData = [
+            // Original Characters
+            { id: 1, name: "Special Week", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 2, name: "Silence Suzuka", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 3, name: "Tokai Teio", turf: "A", dirt: "B", sprint: "F", mile: "B", medium: "A", long: "A", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 4, name: "Maruzensky", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 5, name: "Fuji Kiseki", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 6, name: "Oguri Cap", turf: "A", dirt: "B", sprint: "G", mile: "A", medium: "A", long: "B", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 7, name: "Gold Ship", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "G", late: "A", end: "A" },
+            { id: 8, name: "Vodka", turf: "A", dirt: "B", sprint: "G", mile: "A", medium: "A", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 9, name: "Daiwa Scarlet", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 10, name: "Taiki Shuttle", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 11, name: "Grass Wonder", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 12, name: "Hishi Amazon", turf: "A", dirt: "B", sprint: "G", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 13, name: "Mejiro McQueen", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 14, name: "El Condor Pasa", turf: "A", dirt: "A", sprint: "G", mile: "B", medium: "A", long: "A", front: "A", pace: "A", late: "B", end: "G" },
+            { id: 15, name: "T.M. Opera O", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 16, name: "Narita Brian", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 17, name: "Symboli Rudolf", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 18, name: "Air Groove", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 19, name: "Agnes Digital", turf: "A", dirt: "A", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 20, name: "Seiun Sky", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 21, name: "King Halo", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 22, name: "Haru Urara", turf: "G", dirt: "A", sprint: "A", mile: "B", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 23, name: "Rice Shower", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "B", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 24, name: "Mihono Bourbon", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 25, name: "Mayano Top Gun", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "A" },
+            { id: 26, name: "Manhattan Cafe", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "G", late: "A", end: "A" },
+            { id: 27, name: "Mejiro Ryan", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 28, name: "Sweep Tosho", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 29, name: "Super Creek", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 30, name: "Smart Falcon", turf: "G", dirt: "A", sprint: "A", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 31, name: "Ines Fujin", turf: "A", dirt: "G", sprint: "A", mile: "B", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 32, name: "Agnes Tachyon", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 33, name: "Admire Vega", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 34, name: "Winning Ticket", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 35, name: "Sakura Bakushin O", turf: "A", dirt: "G", sprint: "A", mile: "B", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 36, name: "Eishin Flash", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 37, name: "Biwa Hayahide", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 38, name: "Mejiro Palmer", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "B", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 39, name: "Narita Taishin", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "G", late: "A", end: "A" },
+            { id: 40, name: "Copano Rickey", turf: "G", dirt: "A", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            // Additional Characters
+            { id: 41, name: "Kitasan Black", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 42, name: "Satono Diamond", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 43, name: "Zenno Rob Roy", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 44, name: "Narita Top Road", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 45, name: "Mejiro Dober", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 46, name: "Tosen Jordan", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 47, name: "Nakayama Festa", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 48, name: "Neo Universe", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 49, name: "Hishi Akebono", turf: "A", dirt: "B", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 50, name: "Yaeno Muteki", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 51, name: "Twin Turbo", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 52, name: "Satono Crown", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 53, name: "Mejiro Ardan", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 54, name: "Yukino Bijin", turf: "A", dirt: "B", sprint: "G", mile: "A", medium: "A", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 55, name: "Nice Nature", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 56, name: "Curren Chan", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 57, name: "Kawakami Princess", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 58, name: "Gold City", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 59, name: "Sakura Chiyono O", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 60, name: "Sirius Symboli", turf: "A", dirt: "A", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 61, name: "Meisho Doto", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 62, name: "Daitaku Helios", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 63, name: "Seeking the Pearl", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 64, name: "Shinko Windy", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 65, name: "Sweep Tosho", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 66, name: "Fine Motion", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 67, name: "Mr. C.B.", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 68, name: "Tamamo Cross", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 69, name: "Inari One", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 70, name: "Fal Eagle", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 71, name: "Oryunotakibou", turf: "G", dirt: "A", sprint: "A", mile: "B", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 72, name: "Wonder Acute", turf: "G", dirt: "A", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 73, name: "Duramente", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 74, name: "Cesario", turf: "A", dirt: "A", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 75, name: "Transcend", turf: "G", dirt: "A", sprint: "B", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 76, name: "Lemon Pop", turf: "G", dirt: "A", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 77, name: "Daring Heart", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 78, name: "Hishi Miracle", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "G", late: "A", end: "A" },
+            { id: 79, name: "Tanino Gimlet", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 80, name: "Matikanetannhauser", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "B", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 81, name: "Ikuno Dictus", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 82, name: "Mejiro Bright", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 83, name: "Dantsufureimu", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 84, name: "Jungle Pocket", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 85, name: "Tap Dance City", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 86, name: "A Shin Hikari", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 87, name: "Derring-Do", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 88, name: "Little Cocoa", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 89, name: "Narita Century", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 90, name: "Hokko Tarumae", turf: "G", dirt: "A", sprint: "G", mile: "A", medium: "A", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 91, name: "Verxina", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 92, name: "Eishin Top Run", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 93, name: "Orfevre", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 94, name: "Gentildonna", turf: "A", dirt: "B", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 95, name: "Just a Way", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 96, name: "Lord Kanaloa", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 97, name: "Buena Vista", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 98, name: "Deep Impact", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 99, name: "Heart's Cry", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 100, name: "King Kamehameha", turf: "A", dirt: "B", sprint: "G", mile: "B", medium: "A", long: "A", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 101, name: "Grass Eight", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 102, name: "Taisei Vision", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 103, name: "Cosmo Dream", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 104, name: "Symboli Kris S", turf: "A", dirt: "B", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 105, name: "Hishi Speed", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "G", long: "G", front: "A", pace: "A", late: "G", end: "G" },
+            { id: 106, name: "Aston Machan", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 107, name: "Katsuragi Ace", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 108, name: "Nishino Flower", turf: "A", dirt: "G", sprint: "B", mile: "A", medium: "B", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 109, name: "Daring Tact", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 110, name: "Contrail", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 111, name: "Gran Alegria", turf: "A", dirt: "G", sprint: "A", mile: "A", medium: "B", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 112, name: "Chrono Genesis", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 113, name: "Almond Eye", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 114, name: "Lys Gracieux", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 115, name: "Fierement", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 116, name: "Win Bright", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 117, name: "Satono Aladdin", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 118, name: "Maurice", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 119, name: "Isla Bonita", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "G", front: "B", pace: "A", late: "A", end: "G" },
+            { id: 120, name: "Gold Actor", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 121, name: "Epiphaneia", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 122, name: "One and Only", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 123, name: "Harp Star", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 124, name: "Lovely Day", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 125, name: "Shonan Pandora", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 126, name: "Miki Queen", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 127, name: "Makahiki", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 128, name: "Soul Stirring", turf: "A", dirt: "G", sprint: "G", mile: "B", medium: "A", long: "A", front: "G", pace: "A", late: "A", end: "B" },
+            { id: 129, name: "Rey de Oro", turf: "A", dirt: "G", sprint: "G", mile: "G", medium: "A", long: "A", front: "G", pace: "B", late: "A", end: "A" },
+            { id: 130, name: "Schwable", turf: "A", dirt: "G", sprint: "G", mile: "A", medium: "A", long: "B", front: "A", pace: "A", late: "G", end: "G" }
+        ];
+
+        // Column configuration for Uma Musume
+        const columns = [
+            { data: 'name', title: 'Name' },
+            { data: 'turf', title: 'Turf' },
+            { data: 'dirt', title: 'Dirt' },
+            { data: 'sprint', title: 'Sprint' },
+            { data: 'mile', title: 'Mile' },
+            { data: 'medium', title: 'Medium' },
+            { data: 'long', title: 'Long' },
+            { data: 'front', title: 'Front' },
+            { data: 'pace', title: 'Pace' },
+            { data: 'late', title: 'Late' },
+            { data: 'end', title: 'End' }
+        ];
+
+        const columnNames = ['Name', 'Turf', 'Dirt', 'Sprint', 'Mile', 'Medium', 'Long', 'Front', 'Pace', 'Late', 'End'];
+        const columnCategories = ['', 'Surface', 'Surface', 'Distance', 'Distance', 'Distance', 'Distance', 'Style', 'Style', 'Style', 'Style'];
+
+        // Character portrait mapping using VERIFIED GameTora IDs
+        // Format: https://gametora.com/images/umamusume/characters/thumb/chara_stand_{baseId}_{fullId}.png
+        // IDs verified from: https://gametora.com/umamusume/characters/{id}-{slug}
+        const characterGameIds = {
+            // ===== VERIFIED PLAYABLE CHARACTERS =====
+            "Special Week": "100101",
+            "Silence Suzuka": "100201",
+            "Tokai Teio": "100301",
+            "Maruzensky": "100401",
+            "Fuji Kiseki": "100501",
+            "Oguri Cap": "100601",
+            "Gold Ship": "100701",
+            "Vodka": "100801",
+            "Daiwa Scarlet": "100901",
+            "Taiki Shuttle": "101001",
+            "Grass Wonder": "101101",
+            "Mejiro McQueen": "101301",
+            "El Condor Pasa": "101401",
+            "T.M. Opera O": "101501",
+            "Narita Brian": "101601",
+            "Symboli Rudolf": "101701",
+            "Air Groove": "101801",
+            "Agnes Digital": "101901",
+            "Seiun Sky": "102001",
+            "Biwa Hayahide": "102301",
+            "Mayano Top Gun": "102401",
+            "Manhattan Cafe": "102501",
+            "Mihono Bourbon": "102601",
+            "Mejiro Ryan": "102701",
+            "Hishi Akebono": "102801",
+            "Agnes Tachyon": "103201",       // FIXED: was 102901
+            "Rice Shower": "103001",
+            "Winning Ticket": "103501",
+            "Eishin Flash": "103701",        // FIXED: was null
+            "Curren Chan": "103801",         // FIXED: was null
+            "Kawakami Princess": "103901",
+            "Gold City": "104001",
+            "Sakura Bakushin O": "104101",
+            "Super Creek": "104501",
+            "Smart Falcon": "104601",
+            "Narita Taishin": "105001",
+            "Haru Urara": "105201",
+            "Matikanefukukitaru": "105601",
+            "Nice Nature": "106001",         // FIXED: was null
+            "King Halo": "106101",
+            
+            // ===== PROFILE ONLY / SUPPORT ONLY (no playable version on GameTora) =====
+            "Hishi Amazon": null,
+            "Neo Universe": null,
+            "Admire Vega": null,
+            "Mejiro Palmer": null,
+            "Kitasan Black": null,
+            "Satono Diamond": null,
+            "Zenno Rob Roy": null,
+            "Narita Top Road": null,
+            "Mejiro Dober": null,
+            "Tosen Jordan": null,
+            "Nakayama Festa": null,
+            "Yaeno Muteki": null,
+            "Sweep Tosho": null,
+            "Twin Turbo": null,
+            "Satono Crown": null,
+            "Mejiro Ardan": null,
+            "Ines Fujin": null,
+            "Yukino Bijin": null,
+            "Sakura Chiyono O": null,
+            "Sirius Symboli": null,
+            "Meisho Doto": null,
+            "Daitaku Helios": null,
+            "Seeking the Pearl": null,
+            "Shinko Windy": null,
+            "Fine Motion": null,
+            "Mr. C.B.": null,
+            "Copano Rickey": null,
+            "Tamamo Cross": null,
+            "Inari One": null,
+            "Fal Eagle": null,
+            "Oryunotakibou": null,
+            "Wonder Acute": null,
+            "Duramente": null,
+            "Cesario": null,
+            "Transcend": null,
+            "Lemon Pop": null,
+            "Daring Heart": null,
+            "Hishi Miracle": null,
+            "Tanino Gimlet": null,
+            "Matikanetannhauser": null,
+            "Ikuno Dictus": null,
+            "Mejiro Bright": null,
+            "Dantsufureimu": null,
+            "Jungle Pocket": null,
+            "Tap Dance City": null,
+            "A Shin Hikari": null,
+            "Derring-Do": null,
+            "Little Cocoa": null,
+            "Narita Century": null,
+            "Hokko Tarumae": null,
+            "Verxina": null,
+            "Eishin Top Run": null,
+            "Orfevre": null,
+            "Gentildonna": null,
+            "Just a Way": null,
+            "Lord Kanaloa": null,
+            "Buena Vista": null,
+            "Deep Impact": null,
+            "Heart's Cry": null,
+            "King Kamehameha": null,
+            "Grass Eight": null,
+            "Taisei Vision": null,
+            "Cosmo Dream": null,
+            "Symboli Kris S": null,
+            "Hishi Speed": null,
+            "Aston Machan": null,
+            "Katsuragi Ace": null,
+            "Nishino Flower": null,
+            "Daring Tact": null,
+            "Contrail": null,
+            "Gran Alegria": null,
+            "Chrono Genesis": null,
+            "Almond Eye": null,
+            "Lys Gracieux": null,
+            "Fierement": null,
+            "Win Bright": null,
+            "Satono Aladdin": null,
+            "Maurice": null,
+            "Isla Bonita": null,
+            "Gold Actor": null,
+            "Epiphaneia": null,
+            "One and Only": null,
+            "Harp Star": null,
+            "Lovely Day": null,
+            "Shonan Pandora": null,
+            "Miki Queen": null,
+            "Makahiki": null,
+            "Soul Stirring": null,
+            "Rey de Oro": null,
+            "Schwable": null
+        };
+        
+        // Convert character name to URL-friendly slug
+        function nameToSlug(name) {
+            return name.toLowerCase()
+                .replace(/\./g, '')           // Remove periods (T.M. Opera O -> TM Opera O)
+                .replace(/'/g, '')            // Remove apostrophes
+                .replace(/\s+/g, '-')         // Spaces to hyphens
+                .replace(/[^a-z0-9-]/g, '')   // Remove special chars
+                .replace(/-+/g, '-')          // Multiple hyphens to single
+                .replace(/^-|-$/g, '');       // Trim hyphens from ends
+        }
+        
+        // Portrait verification tracking
+        const portraitStatus = {
+            loaded: new Set(),
+            failed: new Set(),
+            pending: new Set(Object.keys(characterGameIds))
+        };
+        
+        // Update verification panel stats
+        function updateVerifyStats() {
+            document.getElementById('loadedCount').textContent = portraitStatus.loaded.size;
+            document.getElementById('failedCount').textContent = portraitStatus.failed.size;
+            document.getElementById('pendingCount').textContent = portraitStatus.pending.size;
+            
+            // Update failed list
+            const failedList = document.getElementById('failedList');
+            if (portraitStatus.failed.size > 0) {
+                failedList.innerHTML = '<strong>Failed portraits:</strong><br>' + 
+                    Array.from(portraitStatus.failed).map(name => 
+                        `${name} (ID: ${characterGameIds[name]})`
+                    ).join('<br>');
+            } else {
+                failedList.innerHTML = '';
+            }
+        }
+        
+        // Toggle verification mode
+        function toggleVerifyMode() {
+            document.body.classList.toggle('verify-mode');
+            document.getElementById('verifyPanel').classList.toggle('active');
+        }
+        
+        // Get initials from character name
+        function getInitials(name) {
+            return name.split(' ')
+                .filter(word => word.length > 0)
+                .map(word => word[0].toUpperCase())
+                .slice(0, 2)
+                .join('');
+        }
+        
+        // Handle portrait load success
+        function onPortraitLoad(img, name) {
+            const sourceIndex = parseInt(img.getAttribute('data-source') || '0');
+            const sourceNames = ['GameTora', 'UI Avatars', 'DiceBear'];
+            img.classList.remove('loading');
+            img.classList.add('verified');
+            img.title = `${name} | Source: ${sourceNames[sourceIndex] || 'Unknown'}`;
+            portraitStatus.pending.delete(name);
+            portraitStatus.loaded.add(name);
+            updateVerifyStats();
+        }
+        
+        // Handle portrait load failure - try fallback sources
+        function onPortraitError(img, name) {
+            const currentIndex = parseInt(img.getAttribute('data-source') || '0');
+            const urls = getPortraitUrls(name);
+            const nextIndex = currentIndex + 1;
+            
+            // Try next fallback source
+            if (nextIndex < urls.length) {
+                img.setAttribute('data-source', nextIndex.toString());
+                img.src = urls[nextIndex];
+                console.log(`[Portrait] Trying fallback ${nextIndex} for ${name}: ${urls[nextIndex]}`);
+            } else {
+                // All fallbacks failed - show placeholder with initials
+                img.classList.remove('loading');
+                img.classList.add('failed');
+                portraitStatus.pending.delete(name);
+                portraitStatus.failed.add(name);
+                updateVerifyStats();
+                console.log(`[Portrait] All sources failed for ${name}`);
+                const initials = getInitials(name);
+                img.outerHTML = `<span class="char-portrait-placeholder char-initials" title="No portrait available">${initials}</span>`;
+            }
+        }
+        
+        // Get multiple portrait URLs for fallback system
+        // Using GameTora's character stand images (verified working format)
+        function getPortraitUrls(name) {
+            const gameId = characterGameIds[name];
+            const encodedName = encodeURIComponent(name);
+            const urls = [];
+            
+            if (gameId) {
+                // Primary: GameTora character stand image (VERIFIED WORKING!)
+                // Format: chara_stand_{4-digit-base}_{6-digit-full}.png
+                const baseId = gameId.substring(0, 4); // e.g., "1019" from "101901"
+                urls.push(`https://gametora.com/images/umamusume/characters/thumb/chara_stand_${baseId}_${gameId}.png`);
+            }
+            
+            // Fallback 1: UI Avatars - generates avatar with character initials (name in URL)
+            urls.push(`https://ui-avatars.com/api/?name=${encodedName}&background=1a1a1a&color=00fff7&size=80&bold=true&format=png`);
+            
+            // Fallback 2: DiceBear (name in URL as seed)
+            urls.push(`https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodedName}&backgroundColor=1a1a1a`);
+            
+            return urls;
+        }
+        
+        // Get primary portrait URL
+        function getPortraitUrl(name) {
+            const urls = getPortraitUrls(name);
+            return urls.length > 0 ? urls[0] : null;
+        }
+        
+        // Function to render character name with portrait
+        function renderCharacterName(data, type, row) {
+            if (type !== 'display') return data; // For sorting/filtering, use plain text
+            
+            const imgUrl = getPortraitUrl(data);
+            const gameId = characterGameIds[data] || 'N/A';
+            
+            if (imgUrl) {
+                return `<div class="char-cell">
+                    <img src="${imgUrl}" class="char-portrait loading" alt="${data}" 
+                         data-source="0" data-name="${data.replace(/"/g, '&quot;')}"
+                         onload="onPortraitLoad(this, '${data.replace(/'/g, "\\'")}')"
+                         onerror="onPortraitError(this, '${data.replace(/'/g, "\\'")}')">
+                    <span class="char-name">${data}</span>
+                    <span class="char-id">[${gameId}]</span>
+                </div>`;
+            } else {
+                return `<div class="char-cell">
+                    <span class="char-portrait-placeholder">🐴</span>
+                    <span class="char-name">${data}</span>
+                </div>`;
+            }
+        }
+
+        // Function to render grade badges
+        function renderGrade(data) {
+            if (!data) return '';
+            return `<span class="grade grade-${data}">${data}</span>`;
+        }
+
+        // Initialize DataTable function
+        function initializeDataTable(tableId, togglesId, searchId, deleteBtn) {
+            const table = $(`#${tableId}`).DataTable({
+                data: umaMusumeData,
+                columns: [
+                    { data: 'name', render: renderCharacterName },
+                    { data: 'turf', render: renderGrade },
+                    { data: 'dirt', render: renderGrade },
+                    { data: 'sprint', render: renderGrade },
+                    { data: 'mile', render: renderGrade },
+                    { data: 'medium', render: renderGrade },
+                    { data: 'long', render: renderGrade },
+                    { data: 'front', render: renderGrade },
+                    { data: 'pace', render: renderGrade },
+                    { data: 'late', render: renderGrade },
+                    { data: 'end', render: renderGrade }
+                ],
+                
+                // Enable row selection
+                select: {
+                    style: 'single'
+                },
+                
+                // Custom DOM layout:
+                // p = pagination (top)
+                // r = processing
+                // t = table
+                // l = length menu (bottom left)
+                // i = info (below length)
+                dom: '<"table-controls-top"p>rt<"table-controls-bottom"li>',
+                
+                // Pagination options
+                lengthMenu: [[5, 10, 20, 40, -1], [5, 10, 20, 40, "All"]],
+                pageLength: 10,
+                
+                // Language customization
+                language: {
+                    lengthMenu: "Show _MENU_ entries per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ Uma Musume",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Prev"
+                    }
+                },
+                
+                // Order by name by default
+                order: [[0, 'asc']],
+                
+                // Scrolling for better mobile experience
+                scrollX: true,
+                
+                // Header callback for complex headers
+                orderCellsTop: true
+            });
+
+            // Generate Column Toggle Buttons with categories
+            const togglesContainer = $(`#${togglesId}`);
+            let currentCategory = '';
+            
+            columnNames.forEach((name, index) => {
+                const category = columnCategories[index];
+                
+                // Add category label if changed
+                if (category !== currentCategory && category !== '') {
+                    if (index > 0) togglesContainer.append('<br>');
+                    togglesContainer.append(`<span class="toggle-category">${category}:</span>`);
+                    currentCategory = category;
+                }
+                
+                const btn = $(`<button class="btn btn-sm toggle-btn-active" data-column="${index}">${name}</button>`);
+                btn.on('click', function() {
+                    const column = table.column($(this).data('column'));
+                    column.visible(!column.visible());
+                    $(this).toggleClass('toggle-btn-active toggle-btn-inactive');
+                });
+                togglesContainer.append(btn);
+            });
+
+            // Generate Column Search Inputs
+            const searchContainer = $(`#${searchId}`);
+            columnNames.forEach((name, index) => {
+                const colWidth = name === 'Name' ? 'col-md-3 col-sm-6' : 'col-md-2 col-sm-4 col-6';
+                const col = $(`
+                    <div class="${colWidth} mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="${name}" data-column="${index}">
+                    </div>
+                `);
+                col.find('input').on('keyup change', function() {
+                    table.column($(this).data('column')).search(this.value).draw();
+                });
+                searchContainer.append(col);
+            });
+
+            // Delete Button Functionality
+            const deleteBtnEl = $(`#${deleteBtn}`);
+            
+            table.on('select', function() {
+                deleteBtnEl.prop('disabled', false);
+            });
+            
+            table.on('deselect', function() {
+                deleteBtnEl.prop('disabled', true);
+            });
+            
+            deleteBtnEl.on('click', function() {
+                const selectedRow = table.row({ selected: true });
+                if (selectedRow.any()) {
+                    const data = selectedRow.data();
+                    if (confirm(`Delete ${data.name} from the table?`)) {
+                        selectedRow.remove().draw();
+                        deleteBtnEl.prop('disabled', true);
+                    }
+                }
+            });
+
+            // Sort Dropdown Functionality
+            const tableNum = tableId.replace('dataTable', '');
+            const sortColumnSelect = $(`#sortColumn${tableNum}`);
+            const sortOrderSelect = $(`#sortOrder${tableNum}`);
+            
+            function applySortFromDropdown() {
+                const column = parseInt(sortColumnSelect.val());
+                const order = sortOrderSelect.val();
+                table.order([column, order]).draw();
+            }
+            
+            sortColumnSelect.on('change', applySortFromDropdown);
+            sortOrderSelect.on('change', applySortFromDropdown);
+            
+            // Sync dropdown with table when user clicks column headers
+            table.on('order.dt', function() {
+                const currentOrder = table.order();
+                if (currentOrder.length > 0) {
+                    sortColumnSelect.val(currentOrder[0][0]);
+                    sortOrderSelect.val(currentOrder[0][1]);
+                }
+            });
+
+            return table;
+        }
+
+        // Load data (try AJAX first, fall back to embedded)
+        function loadData() {
+            $.ajax({
+                url: 'data/uma_musume.json',
+                dataType: 'json',
+                timeout: 3000,
+                success: function(response) {
+                    const data = response.data || response;
+                    umaMusumeData.length = 0;
+                    data.forEach(item => umaMusumeData.push(item));
+                    initializeTables();
+                },
+                error: function() {
+                    // Use embedded data silently
+                    initializeTables();
+                }
+            });
+        }
+
+        function initializeTables() {
+            // Initialize Table 1
+            const table1 = initializeDataTable(
+                'dataTable1', 
+                'columnToggles1', 
+                'columnSearch1', 
+                'deleteBtn1'
+            );
+
+            // Initialize Table 2 when tab is shown (for proper rendering)
+            let table2Initialized = false;
+            
+            $('button[data-bs-target="#tab2"]').on('shown.bs.tab', function() {
+                if (!table2Initialized) {
+                    const table2 = initializeDataTable(
+                        'dataTable2', 
+                        'columnToggles2', 
+                        'columnSearch2', 
+                        'deleteBtn2'
+                    );
+                    table2Initialized = true;
+                }
+            });
+        }
+
+        // Initialize when document is ready
+        $(document).ready(function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>
